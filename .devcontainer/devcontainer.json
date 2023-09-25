@@ -1,1 +1,15 @@
-// Dev Container
+{
+  "name": "C++ Jupyter",
+  "dockerFile": "Dockerfile", // Path to your Dockerfile
+  "extensions": [
+    "ms-vscode.cpptools" // C/C++ extension for VSCode
+  ],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "notebook.file.autoSave": "afterDelay",
+    "notebook.file.autoSaveDelay": 1000
+  },
+  "postCreateCommand": "pip3 install jupyter",
+  "runArgs": ["--user", "vscode", "--privileged"],
+  "workspaceMount": "source=/path/to/your/local/workspace,destination=/workspace,type=bind,consistency=cached"
+}
