@@ -3,7 +3,8 @@
   "dockerFile": "Dockerfile", // Path to your Dockerfile
   "extensions": [
     "ms-vscode.cpptools", // C/C++ extension for VSCode
-    "ms-toolsai.jupyter"
+    "ms-toolsai.jupyter",
+    "ms-python.python"
   ],
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
