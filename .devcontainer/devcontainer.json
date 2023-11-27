@@ -4,7 +4,10 @@
   "extensions": [
     "ms-vscode.cpptools", // C/C++ extension for VSCode
     "ms-toolsai.jupyter",
-    "ms-python.python"
+    "ms-python.python",
+    "cschlosser.doxdocgen",
+    "jbenden.c-cpp-flylint",
+    "ms-vscode.makefile-tools"
   ],
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
