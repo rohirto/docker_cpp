@@ -4,8 +4,21 @@ FROM ubuntu:latest
 # Install required dependencies
 RUN apt-get update && \
     apt-get install -y wget && \
-    apt-get install -y git && \
-    apt-get clean && \
+    apt-get install -y git \ 
+    build-essential \
+    gcc \
+    g++ \
+    gdb \
+    make \
+    cmake \
+    git \
+    valgrind \
+    cppcheck \
+    libncurses-dev \
+    libevent-dev \
+    doxygen \
+    graphviz \
+    && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Download Miniforge installer
