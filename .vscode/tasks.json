@@ -1,0 +1,133 @@
+{
+    "tasks": [
+        {
+            "label": "Build C++ Program",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-Wall",
+                "-fdiagnostics-color=always",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/../build/${fileBasenameNoExtension}.out"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "with -Wall, -g and -o flags."
+        },
+        {
+            "label": "Run Program",
+            "type": "shell",
+            "command": "cd ${fileDirname}/../build && ./${fileBasenameNoExtension}.out",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "options": {
+                "externalTerminal": true
+            },
+            "detail": "without any arguments passed"
+        },
+        {
+            "label": "Build C Project with Makefile",
+            "type": "shell",
+            "command": "make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "options": {
+                "cwd": "${fileDirname}/../"
+              }
+        },
+        {
+            "label": "Clean C project with Makefile",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "options": {
+                "cwd": "${fileDirname}/../"
+              }
+        },
+        {
+            "label": "Run Project Makefile",
+            "type": "shell",
+            "command": "cd ${fileDirname}/../build && ./a.out",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Run with Valgrind",
+            "type": "shell",
+            "command": "valgrind",
+            "args": [
+                "--tool=memcheck",
+                "${fileDirname}/../build/${fileBasenameNoExtension}.out"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "detail": "Valgrind a memory check tool"
+        },
+        {
+            "label": "Make File Executable",
+            "type": "shell",
+            "command": "chmod",
+            "args": [
+                "+x",
+                "${fileDirname}/../build/${fileBasenameNoExtension}.out",
+                "-s"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Run Program in Background",
+            "type": "shell",
+            "command": "cd ${fileDirname}/../build && ./${fileBasenameNoExtension}.out &",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "options": {
+                "externalTerminal": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}
