@@ -31,12 +31,12 @@
                 "panel": "new"
             },
             "options": {
-                "externalTerminal": true
+                "externalTerminal": "true"
             },
             "detail": "without any arguments passed"
         },
         {
-            "label": "Build C Project with Makefile",
+            "label": "Build Cpp Project with Makefile",
             "type": "shell",
             "command": "make",
             "group": {
@@ -52,7 +52,7 @@
               }
         },
         {
-            "label": "Clean C project with Makefile",
+            "label": "Clean Cpp project with Makefile",
             "type": "shell",
             "command": "make",
             "args": [
@@ -125,7 +125,7 @@
                 "panel": "shared"
             },
             "options": {
-                "externalTerminal": true
+                "externalTerminal": "true"
             }
         }
     ],
