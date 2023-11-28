@@ -1,18 +1,23 @@
 {
-  "name": "C++ Jupyter",
+  "name": "C++ Notebook",
   "dockerFile": "Dockerfile", // Path to your Dockerfile
-  "extensions": [
-    "ms-vscode.cpptools", // C/C++ extension for VSCode
-    "ms-toolsai.jupyter",
-    "ms-python.python",
-    "cschlosser.doxdocgen",
-    "jbenden.c-cpp-flylint",
-    "ms-vscode.makefile-tools"
-  ],
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "notebook.file.autoSave": "afterDelay",
-    "notebook.file.autoSaveDelay": 1000
+  "customizations":{
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools", // C/C++ extension for VSCode
+        "ms-toolsai.jupyter",
+        "ms-python.python",
+        "cschlosser.doxdocgen",
+        "jbenden.c-cpp-flylint",
+        "ms-vscode.makefile-tools"
+      ],
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "notebook.file.autoSave": "afterDelay",
+        "notebook.file.autoSaveDelay": 1000
+
+      }
+    }
   }
   // "postCreateCommand": "pip3 install jupyter",
   // "runArgs": ["--user", "vscode", "--privileged"],
