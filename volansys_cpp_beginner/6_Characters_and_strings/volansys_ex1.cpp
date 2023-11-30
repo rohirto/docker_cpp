@@ -7,6 +7,7 @@
  * 
  * @copyright Copyright (c) 2023 Volansys Technologies
  * 
+ * @paragraph Exercise 1
  * In this exercise you will create a program that determines the length of a first name and last name individually and then the length of 
  * the entire name through the use of the C-style string functions strlen, strcpy, and strcat.
  * 
