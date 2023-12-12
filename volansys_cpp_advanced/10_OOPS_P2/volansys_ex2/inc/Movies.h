@@ -12,11 +12,13 @@
 #include <vector>
 #include <string>
 #include "Movie.h"
+#include "Debug.h"
 
 class Movies
 {
 private:
     std::vector<Movie> movies;
+    size_t find_movie(std::string_view name);
 public:
     Movies();             // Constructor
     ~Movies();          // Destructor
@@ -31,7 +33,7 @@ public:
     Otherwise, create a movie object from the provided information
     and add that movie object to the movies vector and return true
     *********************************************************************/
-    bool add_movie(std::string name, std::string rating, int watched);
+    bool add_movie(const std::string& name,const std::string& rating, int watched);
     
     /*************************************************************************
     increment_watched expects the name of the move to increment the
@@ -44,7 +46,7 @@ public:
     Otherwise, return false since then no movies object with the movie name
     provided exists to increment
     *********************************************************************/
-    bool increment_watched(std::string name);
+    bool increment_watched(const std::string& name);
     
     /*************************************************************************
     display

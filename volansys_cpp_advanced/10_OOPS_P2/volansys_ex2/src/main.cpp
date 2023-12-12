@@ -9,8 +9,8 @@
 #include "Movies.h"
 
 // Function prototypes
-void increment_watched(Movies &movies, std::string name);
-void add_movie(Movies &movies, std::string name, std::string rating, int watched);
+void increment_watched(Movies &movies,const std::string& name);
+void add_movie(Movies &movies,const std::string& name,const std::string& rating, int watched);
 
 /******************************************************************
  * helper function 
@@ -23,7 +23,7 @@ void add_movie(Movies &movies, std::string name, std::string rating, int watched
 *  because the name of the movie was not found
  * ***************************************************************/
 
-void increment_watched(Movies &movies, std::string name) {
+void increment_watched(Movies &movies, const std::string& name) {
     if (movies.increment_watched(name)) {
         std::cout << name << " watch incremented" <<  std::endl;
     } else {
@@ -41,7 +41,8 @@ void increment_watched(Movies &movies, std::string name) {
 *  otherwise the movie was not added 
 *  because the name of the movie was already in movies
  * ***************************************************************/
-void add_movie(Movies &movies, std::string name, std::string rating, int watched) {
+void add_movie(Movies &movies,const std::string& name,const std::string& rating, int watched) {
+    
     if (movies.add_movie(name,rating,watched)) {
         std::cout << name << " added" << std::endl;
     } else {

@@ -7,6 +7,9 @@
  * ***************************************************************/
 #include <iostream>
 #include "Movies.h"
+#include <algorithm>  // for std::for_each
+#include <vector>
+#include <limits>
 
  /*************************************************************************
     Movies no-args constructor
@@ -30,9 +33,20 @@ Movies::~Movies() {
     Otherwise, create a movie object from the provided information
     and add that movie object to the movies vector and return true
     *********************************************************************/
-bool Movies::add_movie(std::string name, std::string rating, int watched) {
+bool Movies::add_movie(const std::string& name,const std::string& rating, int watched) {
     // you implement this method
-    return false;
+   if(find_movie(name) == std::numeric_limits<size_t>::max())
+   {
+        //Add the movie
+        Movie newMov(name,rating,watched);
+        movies.push_back(newMov);
+        return true;
+   }
+   else
+   {
+        //Movie already exists, no need to add
+        return false;
+   }
 }
 
  /*************************************************************************
@@ -46,9 +60,21 @@ bool Movies::add_movie(std::string name, std::string rating, int watched) {
     Otherwise, return false since then no movies object with the movie name
     provided exists to increment
     *********************************************************************/
-bool Movies::increment_watched(std::string name) {
+bool Movies::increment_watched(const std::string& name) {
    // you implement this method
-   return false;
+   size_t index = find_movie(name);
+   if(index == std::numeric_limits<size_t>::max())
+   {
+        //no such movie
+        return false;
+   }
+   else
+   {
+        //Movie there in database, increment the count
+        movies[index].increment_watched();
+        return true;
+
+   }
 }
 
 /*************************************************************************
@@ -58,6 +84,33 @@ bool Movies::increment_watched(std::string name) {
     for each movie call the movie.display method so the movie
     object displays itself
     *********************************************************************/
-void Movies::display() const {
-   // You implement this method
+void Movies::display() const
+{
+    // You implement this method
+    if (!movies.empty())
+    {
+        std::for_each(movies.begin(), movies.end(), [](const Movie &m)
+                      { m.display(); });
+    }
+    else
+    {
+        std::cout << "Sorry, no movies to display\n";
+    }
+}
+
+size_t Movies::find_movie(std::string_view name)
+{
+    auto it = std::find_if(movies.begin(), movies.end(), [&name](const Movie& m){return m.get_name() == name;});
+
+    if (it != movies.end()) 
+    {
+        // Calculate the index using std::distance
+        return std::distance(movies.begin(), it);
+    } 
+    else 
+    {
+        // Return a value indicating "not found"
+        return std::numeric_limits<size_t>::max();
+    }
+
 }
