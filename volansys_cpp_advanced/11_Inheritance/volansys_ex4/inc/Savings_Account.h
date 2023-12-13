@@ -11,8 +11,11 @@
 //
 
 class Savings_Account: public Account {
-    friend std::ostream &operator<<(std::ostream &os, const Savings_Account &account);
+    friend std::ostream &operator<<(std::ostream &os, const Savings_Account &account);  //declares a friend function operator<< that can access
+                                                                                        // private members of Savings_Account. This is often used
+                                                                                        // for stream insertion (output) operators.
 private:
+//def_name, def_balance, and def_int_rate are private static constexpr members used as default values for the constructor parameters.
     static constexpr const char *def_name = "Unnamed Savings Account";
     static constexpr double def_balance = 0.0;
     static constexpr double def_int_rate = 0.0;
