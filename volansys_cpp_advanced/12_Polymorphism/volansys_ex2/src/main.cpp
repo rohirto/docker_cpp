@@ -61,16 +61,16 @@ int main() {
     cout.precision(2);
     cout << fixed;
    
-    // Accounts
-    vector<Account> accounts;
-    accounts.push_back(Account {});
-    accounts.push_back(Account {"Larry"});
-    accounts.push_back(Account {"Moe", 2000} );
-    accounts.push_back(Account {"Curly", 5000} );
+    // Accounts - Not possible now as my class is an abstract class
+    // vector<Account> accounts;
+    // accounts.push_back(Account {});
+    // accounts.push_back(Account {"Larry"});
+    // accounts.push_back(Account {"Moe", 2000} );
+    // accounts.push_back(Account {"Curly", 5000} );
     
-    display(accounts);
-    deposit(accounts, 1000);
-    withdraw(accounts,2000);
+    // display(accounts);
+    // deposit(accounts, 1000);
+    // withdraw(accounts,2000);
     
     // Savings 
 
