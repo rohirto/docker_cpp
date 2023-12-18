@@ -5,7 +5,7 @@
 #include "Account.h"
 #include "I_Printable.h"
 
-class Checking_Account: public Account , public I_Printable{
+class Checking_Account: public Account{
     friend std::ostream &operator<<(std::ostream &os, const Checking_Account &account);
 private:
     static constexpr const char *def_name = "Unnamed Checking Account";

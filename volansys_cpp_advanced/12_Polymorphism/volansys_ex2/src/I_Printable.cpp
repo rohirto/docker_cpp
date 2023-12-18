@@ -12,6 +12,6 @@
 #include "I_Printable.h"
 
 std::ostream &operator<<(std::ostream &os, const I_Printable &obj){
-    os << "[Account: " << obj.name << ": " << obj.balance << "]";
+    //os << "[Account: " << obj.name << ": " << obj.balance << "]";
     return os;
 }

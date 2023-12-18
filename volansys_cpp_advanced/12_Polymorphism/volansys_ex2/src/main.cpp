@@ -62,11 +62,11 @@ int main() {
     cout << fixed;
    
     // Accounts - Not possible now as my class is an abstract class
-    // vector<Account> accounts;
-    // accounts.push_back(Account {});
-    // accounts.push_back(Account {"Larry"});
-    // accounts.push_back(Account {"Moe", 2000} );
-    // accounts.push_back(Account {"Curly", 5000} );
+    // vector<Account* > accounts;
+    // accounts.push_back(new Account {});
+    // accounts.push_back(new Account {"Larry"});
+    // accounts.push_back(new Account {"Moe", 2000} );
+    // accounts.push_back(new Account {"Curly", 5000} );
     
     // display(accounts);
     // deposit(accounts, 1000);
@@ -74,11 +74,11 @@ int main() {
     
     // Savings 
 
-    vector<Savings_Account> sav_accounts;
-    sav_accounts.push_back(Savings_Account {} );
-    sav_accounts.push_back(Savings_Account {"Superman"} );
-    sav_accounts.push_back(Savings_Account {"Batman", 2000} );
-    sav_accounts.push_back(Savings_Account {"Wonderwoman", 5000, 5.0} );
+    vector<Account* > sav_accounts;
+    sav_accounts.push_back(new Savings_Account {} );
+    sav_accounts.push_back(new Savings_Account {"Superman"} );
+    sav_accounts.push_back(new Savings_Account {"Batman", 2000} );
+    sav_accounts.push_back(new Savings_Account {"Wonderwoman", 5000, 5.0} );
 
     display(sav_accounts);
     deposit(sav_accounts, 1000);
@@ -86,11 +86,11 @@ int main() {
    
    // Checking
    
-    vector<Checking_Account> check_accounts;
-    check_accounts.push_back(Checking_Account {} );
-    check_accounts.push_back(Checking_Account {"Kirk"} );
-    check_accounts.push_back(Checking_Account {"Spock", 2000} );
-    check_accounts.push_back(Checking_Account {"Bones", 5000} );
+    vector<Account* > check_accounts;
+    check_accounts.push_back(new Checking_Account {} );
+    check_accounts.push_back(new Checking_Account {"Kirk"} );
+    check_accounts.push_back(new Checking_Account {"Spock", 2000} );
+    check_accounts.push_back(new Checking_Account {"Bones", 5000} );
 
     display(check_accounts);
     deposit(check_accounts, 1000);
@@ -98,11 +98,11 @@ int main() {
 
     // Trust
   
-    vector<Trust_Account> trust_accounts;
-    trust_accounts.push_back(Trust_Account {} );
-    trust_accounts.push_back(Trust_Account {"Athos", 10000, 5.0} );
-    trust_accounts.push_back(Trust_Account {"Porthos", 20000, 4.0} );
-    trust_accounts.push_back(Trust_Account {"Aramis", 30000} );
+    vector<Account* > trust_accounts;
+    trust_accounts.push_back(new Trust_Account {} );
+    trust_accounts.push_back(new Trust_Account {"Athos", 10000, 5.0} );
+    trust_accounts.push_back(new Trust_Account {"Porthos", 20000, 4.0} );
+    trust_accounts.push_back(new Trust_Account {"Aramis", 30000} );
 
     display(trust_accounts);
     deposit(trust_accounts, 1000);
@@ -112,6 +112,20 @@ int main() {
     // All withdrawals should fail if there are too many withdrawals or if the withdrawl is > 20% of the balance
     for (int i=1; i<=5; i++)
         withdraw(trust_accounts, 1000);
+    
+     // Clean up allocated memory
+    // for (auto acc : accounts)
+    //     delete acc;
+
+    for (auto acc : sav_accounts)
+        delete acc;
+
+    for (auto acc : check_accounts)
+        delete acc;
+
+    for (auto acc : trust_accounts)
+        delete acc;
+
     
 
     

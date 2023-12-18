@@ -4,10 +4,6 @@ Account::Account(std::string name, double balance)
     : name{name}, balance{balance} {
 }
 
-Account::~Account()
-{
-
-}
 
 bool Account::deposit(double amount) {
     if (amount < 0) 
@@ -27,6 +23,11 @@ bool Account::withdraw(double amount) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Account &account) {
-    os << "[Account: " << account.name << ": " << account.balance << "]";
+    account.print(os);
     return os;
 }
+
+void Account::print(std::ostream &os) const {
+    os << "[Account: " << name << ": " << balance << "]";
+}
+
