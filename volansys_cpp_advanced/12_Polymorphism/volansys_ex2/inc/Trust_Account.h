@@ -2,6 +2,7 @@
 #define _TRUST_ACCOUNT_H_
 
 #include "Savings_Account.h"
+#include "I_Printable.h"
 
 class Trust_Account : public Savings_Account {
     friend std::ostream &operator<<(std::ostream &os, const Trust_Account &account);
@@ -23,6 +24,7 @@ public:
     
     // Only allowed maximum of 3 withdrawals, each can be up to a maximum of 20% of the account's value
     bool withdraw(double amount) override;
+    void print(std::ostream &os) const override;
 };
 
 #endif // _TRUST_ACCOUNT_H_

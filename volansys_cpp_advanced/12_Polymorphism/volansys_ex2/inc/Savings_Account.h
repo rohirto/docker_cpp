@@ -1,8 +1,9 @@
 #ifndef _SAVINGS_ACCOUNT_H_
 #define _SAVINGS_ACCOUNT_H_
 #include "Account.h"
+#include "I_Printable.h"
 
-class Savings_Account: public Account {
+class Savings_Account: public Account, public I_Printable{
     friend std::ostream &operator<<(std::ostream &os, const Savings_Account &account);
 private:
     static constexpr const char *def_name = "Unnamed Savings Account";
@@ -15,6 +16,7 @@ public:
     bool deposit(double amount) override;
     // Inherits the Account::withdraw method
     bool withdraw(double amount) override;
+    void print(std::ostream &os) const override;
 };
 
 #endif // _SAVINGS_ACCOUNT_H_

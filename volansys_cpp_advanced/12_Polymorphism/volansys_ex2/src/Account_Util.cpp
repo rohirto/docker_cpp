@@ -8,19 +8,22 @@ void display(const std::vector<Account *> &accounts)
     {
         if (Savings_Account *sa = dynamic_cast<Savings_Account *>(acc))
         {
-            std::cout << "\n=== Savings Accounts=====================================" << std::endl;
-            sa->print(std::cout);
+            if (Trust_Account *ta = dynamic_cast<Trust_Account *>(sa))
+            {
+                std::cout << "\n=== Trust Accounts=====================================" << std::endl;
+
+                ta->print(std::cout);
+            }
+            else
+            {
+                std::cout << "\n=== Savings Accounts=====================================" << std::endl;
+                sa->print(std::cout);
+            }
         }
         else if (Checking_Account *ca = dynamic_cast<Checking_Account *>(acc))
         {
             std::cout << "\n=== Checking Accounts=====================================" << std::endl;
             ca->print(std::cout);
-        }
-        else if (Trust_Account *ta = dynamic_cast<Trust_Account *>(acc))
-        {
-            std::cout << "\n=== Trust Accounts=====================================" << std::endl;
-
-            ta->print(std::cout);
         }
     }
 }
@@ -32,21 +35,38 @@ void deposit(std::vector<Account *> &accounts, double amount)
     {
         if (Savings_Account *sa = dynamic_cast<Savings_Account *>(acc))
         {
-            std::cout << "\n=== Depositing to Savings Accounts===========================" << std::endl;
-
-            if (sa->deposit(amount))
+            if (Trust_Account *ta = dynamic_cast<Trust_Account *>(sa))
             {
-                std::cout << "Deposited " << amount << " to " ;
-                sa->print(std::cout);
+                std::cout << "\n=== Depositing to Trust Accounts===========================" << std::endl;
+
+                if (ta->deposit(amount))
+                {
+                    std::cout << "Deposited " << amount << " to ";
+                    ta->print(std::cout);
+                }
+
+                else
+                {
+                    std::cout << "Failed Deposit of " << amount << " to ";
+                    ta->print(std::cout);
+                }
             }
-                
             else
             {
-                std::cout << "Failed Deposit of " << amount << " to ";
-                sa->print(std::cout);
+                std::cout << "\n=== Depositing to Savings Accounts===========================" << std::endl;
 
+                if (sa->deposit(amount))
+                {
+                    std::cout << "Deposited " << amount << " to ";
+                    sa->print(std::cout);
+                }
+
+                else
+                {
+                    std::cout << "Failed Deposit of " << amount << " to ";
+                    sa->print(std::cout);
+                }
             }
-                
         }
         else if (Checking_Account *ca = dynamic_cast<Checking_Account *>(acc))
         {
@@ -66,26 +86,6 @@ void deposit(std::vector<Account *> &accounts, double amount)
                 ca->print(std::cout);
 
             }
-                
-        }
-        else if (Trust_Account *ta = dynamic_cast<Trust_Account *>(acc))
-        {
-            std::cout << "\n=== Depositing to Trust Accounts===========================" << std::endl;
-
-            if (ta->deposit(amount))
-            {
-                std::cout << "Deposited " << amount << " to " ;
-                ta->print(std::cout);
-
-            }
-                
-            else
-            {
-                std::cout << "Failed Deposit of " << amount << " to " ;
-                ta->print(std::cout);
-
-            }
-                
         }
     }
 }
@@ -97,22 +97,38 @@ void withdraw(std::vector<Account *> &accounts, double amount)
     {
         if (Savings_Account *sa = dynamic_cast<Savings_Account *>(acc))
         {
-            std::cout << "\n=== Withdrawing from Savings Accounts=======================" << std::endl;
-
-            if (sa->Account::withdraw(amount))
+            if (Trust_Account *ta = dynamic_cast<Trust_Account *>(sa))
             {
-                std::cout << "Withdrew " << amount << " from " ;
-                sa->print(std::cout);
+                std::cout << "\n=== Withdraw from Trust Accounts===========================" << std::endl;
 
+                if (ta->withdraw(amount))
+                {
+                    std::cout << "Withdrew " << amount << " from ";
+                    ta->Trust_Account::print(std::cout);
+                }
+
+                else
+                {
+                    std::cout << "Failed Withdrawal of " << amount << " from ";
+                    ta->Trust_Account::print(std::cout);
+                }
             }
-                
             else
             {
-                std::cout << "Failed Withdrawal of " << amount << " from " ;
-                sa->print(std::cout);
+                std::cout << "\n=== Withdrawing from Savings Accounts=======================" << std::endl;
 
+                if (sa->Account::withdraw(amount))
+                {
+                    std::cout << "Withdrew " << amount << " from ";
+                    sa->print(std::cout);
+                }
+
+                else
+                {
+                    std::cout << "Failed Withdrawal of " << amount << " from ";
+                    sa->print(std::cout);
+                }
             }
-                
         }
         else if (Checking_Account *ca = dynamic_cast<Checking_Account *>(acc))
         {
@@ -129,25 +145,6 @@ void withdraw(std::vector<Account *> &accounts, double amount)
             {
                 std::cout << "Failed Withdrawal of " << amount << " from " ;
                 ca->print(std::cout);
-
-            }
-                
-        }
-        else if (Trust_Account *ta = dynamic_cast<Trust_Account *>(acc))
-        {
-            std::cout << "\n=== Withdraw from Trust Accounts===========================" << std::endl;
-
-            if (ta->withdraw(amount))
-            {
-                std::cout << "Withdrew " << amount << " from " ;
-                ta->print(std::cout);
-
-            }
-                
-            else
-            {
-                std::cout << "Failed Withdrawal of " << amount << " from " ;
-                ta->print(std::cout);
 
             }
                 

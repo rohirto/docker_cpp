@@ -5,7 +5,7 @@
 #include "Account.h"
 #include "I_Printable.h"
 
-class Checking_Account: public Account{
+class Checking_Account: public Account, public I_Printable{
     friend std::ostream &operator<<(std::ostream &os, const Checking_Account &account);
 private:
     static constexpr const char *def_name = "Unnamed Checking Account";
@@ -16,6 +16,7 @@ public:
     bool withdraw(double) override;
     // Inherits the Account::deposit method
     bool deposit(double amount) override;
+    void print(std::ostream &os) const override;
 
 };
 
