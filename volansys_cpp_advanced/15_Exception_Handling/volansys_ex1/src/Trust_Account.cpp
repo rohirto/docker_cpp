@@ -5,6 +5,7 @@ Trust_Account::Trust_Account(std::string name, double balance, double int_rate)
         
 }
 
+
 // Deposit additional Rs 50 bonus when amount >= Rs 5000
 bool Trust_Account::deposit(double amount) {
     if (amount >= bonus_threshold)
