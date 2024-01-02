@@ -19,6 +19,7 @@ RUN apt-get update && \
     doxygen \
     graphviz \
     libboost-all-dev \
+    libsfml-dev \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

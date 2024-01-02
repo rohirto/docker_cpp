@@ -128,6 +128,56 @@
             "options": {
                 "externalTerminal": "true"
             }
+        },
+        {
+            "label": "Build C++ SFML Prgram",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-Wall",
+                "-fdiagnostics-color=always",
+                "-fconcepts",
+                "-g",
+                "${file}",
+                "-o",
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+                "${fileDirname}/../build/${fileBasenameNoExtension}.out"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "with -Wall, -g and -o flags."
+
+        },
+        {
+            "label": "Build lncurses C++ Prgram",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-Wall",
+                "-fdiagnostics-color=always",
+                "-fconcepts",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/../build/${fileBasenameNoExtension}.out",
+                "-lncurses"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "with -Wall, -g and -o flags."
+
         }
     ],
     "version": "2.0.0"
