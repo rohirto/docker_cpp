@@ -34,7 +34,7 @@ public:
     template <typename T>
     void display_red(T str)
     {
-        std::cout << "\033[1;31m" << str << "\033[0m\n";
+        std::cout << "\033[1;31m" << str << "\033[0m";
     }
 
     /**
@@ -46,7 +46,7 @@ public:
     template <typename T>
     void display_green(T str)
     {
-        std::cout << "\033[1;32m" << str << "\033[0m\n";
+        std::cout << "\033[1;32m" << str << "\033[0m";
     }
 
     /**
@@ -58,7 +58,7 @@ public:
     template <typename T>
     void display_yellow(T str)
     {
-        std::cout << "\033[1;33m" << str << "\033[0m\n";
+        std::cout << "\033[1;33m" << str << "\033[0m";
     }
 
     /**
@@ -70,7 +70,7 @@ public:
     template <typename T>
     void display_blue(T str)
     {
-        std::cout << "\033[1;34m" << str << "\033[0m\n";
+        std::cout << "\033[1;34m" << str << "\033[0m";
     }
 
     /**
@@ -79,13 +79,17 @@ public:
      */
     void display_decorator()
     {
-        std::cout << "===============================\n";
+        std::cout << "===============================";
     }
 
     void clear()
     {
         std::system("clear");
     }
+
+    int getwidth(){return width;}
+    int getheight(){return height;}
+
 
     //Vitual funcs
     virtual char display_menu()=0;

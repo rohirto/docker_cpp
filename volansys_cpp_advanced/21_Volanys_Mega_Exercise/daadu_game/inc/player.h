@@ -16,12 +16,26 @@
 
 #include <string>
 #include <iostream>
+#include <map>
+#include <utility>
 
 class player{
     char name[20];
+    char player_no; //1 or 2
+    bool turn;   //true if player's turn 
+    std::map<int,std::pair<int,int>> pos; //Status of the goti 
+
+    std::map<int,std::pair<int,int>> player_map; // 26 steps that player has to complete
+
 
 public:
+    player();
     void setname();
+    std::string getname();
+    std::map<int,std::pair<int,int>> get_pos();
+
+    void set_turn(bool val);
+    bool daa_check();
 
 };
 

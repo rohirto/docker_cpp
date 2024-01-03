@@ -1,72 +1,29 @@
-#include <ncurses.h>
 #include <iostream>
 #include <vector>
 
-class LudoGame {
-private:
-    int currentPlayer;
-    std::vector<int> playerPositions;
-
-public:
-    LudoGame() : currentPlayer(0), playerPositions(4, 0) {}
-
-    void drawBoard() {
-        clear(); // Clear the screen
-        // Draw the Ludo board
-        // You can use ncurses functions to print text and move the cursor
-    }
-
-    void handleInput() {
-        int key = getch(); // Get user input
-
-        // Handle key presses
-        switch (key) {
-            case 'q':
-                endwin(); // End ncurses mode
-                std::exit(0);
-                break;
-            case 'r':
-                resetGame();
-                break;
-            case ' ':
-                rollDice();
-                break;
-        }
-    }
-
-    void rollDice() {
-        // Simulate rolling a dice
-        int diceValue = 1 + rand() % 6;
-
-        // Move the current player's piece based on the dice value
-        playerPositions[currentPlayer] += diceValue;
-
-        // Update the current player
-        currentPlayer = (currentPlayer + 1) % 4;
-    }
-
-    void resetGame() {
-        // Reset game state
-        currentPlayer = 0;
-        playerPositions = std::vector<int>(4, 0);
-    }
-};
-
 int main() {
-    initscr(); // Start ncurses mode
-    cbreak();  // Disable line buffering
-    noecho();  // Do not display user input
-    keypad(stdscr, true); // Enable special keys
+    // Define a 3x3 grid represented by a 3D vector of characters
+    std::vector<std::vector<std::vector<char>>> grid(3, std::vector<std::vector<char>>(3, std::vector<char>(1, ' ')));
 
-    LudoGame game;
+    // Create a vector<char> to copy into the grid
+    std::vector<char> charVector = {'A', 'B', 'C'};
 
-    // Game loop
-    while (true) {
-        game.drawBoard();
-        game.handleInput();
+    // Specify the location (i, j) where you want to copy the vector
+    int i = 1; // Row index
+    int j = 2; // Column index
+
+    // Copy the charVector into the specified location
+    grid[i][j] = charVector;
+
+    // Print the updated grid
+    for (const auto& row : grid) {
+        for (const auto& col : row) {
+            for (char ch : col) {
+                std::cout << ch << " ";
+            }
+        }
+        std::cout << std::endl;
     }
-
-    endwin(); // End ncurses mode
 
     return 0;
 }

@@ -1,151 +1,99 @@
 #include <iostream>
-#include <signal.h>
-#include <ncurses.h>
-#include <menu.h>
-#include <string>
-#include <unistd.h>
+#include <vector>
+#include <cstdlib> // For system("clear") or system("cls")
 
-using namespace std;
-
-#define SCREEN_MAIN 0
-
-#define KKEY_DOWN 258
-#define KKEY_UP 259
-#define KEY_q 113
-
-char *MenuItems[1024];
-int SelItem = 0;
-int LastItem = 0;
-char *HeaderText;
-char *StatusText;
-WINDOW *win;
-bool Terminated;
-int Screen = 0;
-int LastKey = 0;
-int MaxX = 0;
-int MaxY = 0;
-
-int ProcessScreenMain();
-void ClearLine(int y, int l);
-
-int Process()
-{
-    getmaxyx(win, MaxY, MaxX);
-
-    switch (Screen)
-    {
-    default:
-        ProcessScreenMain();
-    }
-
-    if (LastKey == KEY_q)
-    {
-        Terminated = true;
-    }
+// Function to clear the terminal screen
+void clearScreen() {
+#ifdef _WIN32
+    std::system("cls");
+#else
+    std::system("clear");
+#endif
 }
 
-int ProcessScreenMain()
-{
-    MenuItems[0] = "dffreiodadasdasd";
-    MenuItems[1] = "dffreio2222222222";
-    LastItem = 1;
-
-    attrset(COLOR_PAIR(1));
-    for (int i = 0; i <= MaxY; i++)
-        ClearLine(i, MaxX);
-
-    // draw header
-    attrset(A_BOLD | COLOR_PAIR(2));
-    ClearLine(0, MaxX);
-    mvaddstr(0, 0, HeaderText);
-
-    // draw body
-    attrset(COLOR_PAIR(1));
-
-    for (int i = 0; i <= LastItem; i++)
-    {
-        if (SelItem == i)
-        {
-            attrset(COLOR_PAIR(3));
+// Function to print the Tic Tac Toe board
+void printBoard(const std::vector<std::vector<char>>& board) {
+    for (const auto& row : board) {
+        for (char cell : row) {
+            std::cout << cell << " ";
         }
-        else
-        {
-            attrset(COLOR_PAIR(1));
+        std::cout << std::endl;
+    }
+}
+
+// Function to check if a player has won
+bool checkWin(const std::vector<std::vector<char>>& board, char player) {
+    // Check rows and columns
+    for (int i = 0; i < 3; ++i) {
+        if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) ||
+            (board[0][i] == player && board[1][i] == player && board[2][i] == player)) {
+            return true;
         }
-        ClearLine(1 + i, MaxX);
-        mvaddstr(1 + i, 0, MenuItems[i]);
     }
 
-    // draw status line
-    attrset(A_BOLD | COLOR_PAIR(2));
-    ClearLine(MaxY - 2, MaxX);
-    mvaddstr(MaxY - 2, 0, StatusText);
-
-    curs_set(0);
-    refresh();
-
-    LastKey = getch();
-
-    if (LastKey == KEY_UP)
-        SelItem--;
-    if (LastKey == KEY_DOWN)
-        SelItem++;
-
-    if (SelItem > LastItem)
-        SelItem = LastItem;
-    if (SelItem < 0)
-        SelItem = 0;
-}
-
-void ClearLine(int y, int l)
-{
-    move(y, 1);
-    l++;
-    char Str[l];
-    for (int i = 0; i < l; i++)
-        Str[i] = ' ';
-    Str[l - 1] = '\0';
-    mvaddstr(y, 0, Str);
-}
-
-void CatchSIG(int sig)
-{
-    Terminated = true;
-}
-
-int main(int argc, char *argv[])
-{
-    int c = 0;
-
-    signal(SIGINT, CatchSIG);
-
-    initscr();
-    keypad(stdscr, true);
-    nonl();
-    cbreak();
-    noecho();
-    win = newwin(0, 0, 0, 0);
-
-    if (has_colors())
-    {
-        start_color();
-        init_pair(1, COLOR_WHITE, COLOR_BLACK);
-        init_pair(2, COLOR_GREEN, COLOR_BLUE);
-        init_pair(3, COLOR_BLACK, COLOR_CYAN);
+    // Check diagonals
+    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
+        (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
+        return true;
     }
 
-    SelItem = 0;
-    LastItem = 0;
-    HeaderText = "  q:Quit  ";
-    StatusText = "dumdi di dumm da";
+    return false;
+}
 
-    while (!Terminated)
-    {
-        Process();
-        usleep(1000);
+int main() {
+    std::vector<std::vector<char>> board(3, std::vector<char>(3, ' '));
+    char currentPlayer = 'X';
+
+    while (true) {
+        clearScreen();
+        printBoard(board);
+
+        // Get player move
+        int row, col;
+        std::cout << "Player " << currentPlayer << ", enter your move (row and column): ";
+        std::cin >> row >> col;
+
+        // Validate the move
+        if (row < 0 || row >= 3 || col < 0 || col >= 3 || board[row][col] != ' ') {
+            std::cout << "Invalid move! Try again.\n";
+            continue;
+        }
+
+        // Make the move
+        board[row][col] = currentPlayer;
+
+        // Check for a win
+        if (checkWin(board, currentPlayer)) {
+            clearScreen();
+            printBoard(board);
+            std::cout << "Player " << currentPlayer << " wins!\n";
+            break;
+        }
+
+        // Check for a tie
+        bool isTie = true;
+        for (const auto& row : board) {
+            for (char cell : row) {
+                if (cell == ' ') {
+                    isTie = false;
+                    break;
+                }
+            }
+            if (!isTie) {
+                break;
+            }
+        }
+
+        if (isTie) {
+            clearScreen();
+            printBoard(board);
+            std::cout << "It's a tie!\n";
+            break;
+        }
+
+        // Switch players
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
     }
 
-    cout << "Terminated" << endl;
-
-    endwin();
+    return 0;
 }
