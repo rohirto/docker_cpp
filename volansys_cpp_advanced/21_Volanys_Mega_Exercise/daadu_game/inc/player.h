@@ -164,8 +164,8 @@ public:
     bool daa_check(char c);
     void move_piece( int steps, player& other);
     bool check_daa_initiated(){return daa_initiated;}
-    void set_pawn_back(pawn p, int no);
-    void set_king_back(king k, int no);
+    void set_pawn_back(pawn& p, int no);
+    void set_king_back(king& k, int no);
     
 
 };

@@ -102,18 +102,18 @@ int main()
                             else
                             {
                                 //daa already done, account as one
-                                p1.move_piece(1);
+                                p1.move_piece(1,p2);
                             }
                         }
                         else if(ch == 'c')
                         {
-                            p1.move_piece(1);
+                            p1.move_piece(1,p2);
                         }
                         break;
                     case 2:
                         if(p1.check_daa_initiated())
                         {
-                            p1.move_piece(2);
+                            p1.move_piece(2,p2);
                         }
                         
                         toggle_turns(p1,p2);
@@ -121,7 +121,7 @@ int main()
                     case 3:
                         if(p1.check_daa_initiated())
                         {
-                            p1.move_piece(3);
+                            p1.move_piece(3,p2);
                         }
                         
                         toggle_turns(p1,p2);
@@ -130,7 +130,7 @@ int main()
                     case 4:
                         if(p1.check_daa_initiated())
                         {
-                            p1.move_piece(4);
+                            p1.move_piece(4,p2);
                         }
                         
                         toggle_turns(p1,p2);
@@ -138,7 +138,7 @@ int main()
                     case 10:
                         if(p1.check_daa_initiated())
                         {
-                            p1.move_piece(10);
+                            p1.move_piece(10,p2);
                         }
                         
                         break;
@@ -196,19 +196,19 @@ int main()
                             else
                             {
                                 //daa already done, account as one
-                                p2.move_piece(1);
+                                p2.move_piece(1,p1);
                             }
                         }
                         else if(ch == 'c')
                         {
-                            p2.move_piece(1);
+                            p2.move_piece(1,p1);
                         }
 
                         break;
                     case 2:
                         if(p2.check_daa_initiated())
                         {
-                            p2.move_piece(2);
+                            p2.move_piece(2,p1);
                         }
                         
                         toggle_turns(p1,p2);
@@ -216,7 +216,7 @@ int main()
                     case 3:
                         if(p2.check_daa_initiated())
                         {
-                             p2.move_piece(3);
+                             p2.move_piece(3,p1);
                         }
                        
                         toggle_turns(p1,p2);
@@ -224,7 +224,7 @@ int main()
                     case 4:
                         if(p2.check_daa_initiated())
                         {
-                            p2.move_piece(4);
+                            p2.move_piece(4,p1);
                         }
                         
                         toggle_turns(p1,p2);
@@ -232,7 +232,7 @@ int main()
                     case 10:
                         if(p2.check_daa_initiated())
                         {
-                            p2.move_piece(10);
+                            p2.move_piece(10,p1);
                         }
                         break;
                     default:
