@@ -8,10 +8,30 @@
  * @copyright Copyright (c) 2024 Volansys Technologies
  * 
  */
-
+#include<unistd.h>
 #include "game_menu.h"
 #include "game_objects.h"
 #include "player.h"
+#include <limits>
+
+void toggle_turns(player& p1, player& p2)
+{
+    if(p1.get_turn())
+    {
+        p1.set_turn(false);
+        p2.set_turn(true);
+    }
+    else
+    {
+        p1.set_turn(true);
+        p2.set_turn(false);
+    }
+}
+
+void check_clashes(player& p1, player& p2)
+{
+    
+}
 
 int main()
 {
@@ -37,46 +57,205 @@ int main()
 
         cowries c;
 
-        while(1)
+        while (1)
         {
-            //Player 1 turn
-            window->display_yellow("Player 1 turn \t press enter to throw cowries: ");
-            std::cin >> choice;
-
-            
-            if(choice == '\n')
+            char ch;
+            // Player 1 turn
+            if (p1.get_turn())
             {
+                window->display_yellow(p1.getname());
+                window->display_yellow(" ,press f to thrown cowries");
 
-                c.cowry_throw();
-                int score = c.getCount();
-
-                switch (score)
+                std::cin >> ch;
+                if (ch == 'f')
                 {
-                case 1:
-                    if(p1.daa_check())
+
+                    c.cowry_throw();
+                    int score = c.getCount();
+
+                    window->display_yellow("You got: ");
+                    window->display_blue(score);
+                    std::cout << std::endl;
+
+                    //Add 3sec delay
+                    usleep(3 * 1000000);//sleeps for 3 second
+
+                    switch (score)
                     {
-                        //remove a pawn
+                    case 1:
+                        window->display_yellow("Press 'k' to tale out king or press 'p' to take out pawn, press 'c' to skip daa: ");
+
+                        ch = window->get_char();
+                        while(ch != 'k' && ch != 'p' && ch != 'c')
+                        {
+                            ch = window->get_char();
+                        }
+                        
+                        if(ch == 'k' || ch == 'p')
+                        {
+                            // Player opted for daa
+                            if (p1.daa_check(ch))
+                            {
+                                // remove a pawn
+                                
+                            }
+                            else
+                            {
+                                //daa already done, account as one
+                                p1.move_piece(1);
+                            }
+                        }
+                        else if(ch == 'c')
+                        {
+                            p1.move_piece(1);
+                        }
+                        break;
+                    case 2:
+                        if(p1.check_daa_initiated())
+                        {
+                            p1.move_piece(2);
+                        }
+                        
+                        toggle_turns(p1,p2);
+                        break;
+                    case 3:
+                        if(p1.check_daa_initiated())
+                        {
+                            p1.move_piece(3);
+                        }
+                        
+                        toggle_turns(p1,p2);
+                        
+                        break;
+                    case 4:
+                        if(p1.check_daa_initiated())
+                        {
+                            p1.move_piece(4);
+                        }
+                        
+                        toggle_turns(p1,p2);
+                        break;
+                    case 10:
+                        if(p1.check_daa_initiated())
+                        {
+                            p1.move_piece(10);
+                        }
+                        
+                        break;
+                    default:
+                        toggle_turns(p1,p2);
+                        break;
                     }
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4: 
-                    break;
-                case 10:
-                    break;
-                default:
-                    break;
+
+                    window->clear();
+                    gb.set_board(p1, p2);
+                }
+
+                else
+                {
+                    window->display_yellow("wrong key pressed!\n");
                 }
             }
-            else
+            else if(p2.get_turn())
             {
-                window->display_yellow("wrong key pressed!\n");
+                window->display_yellow(p2.getname());
+                window->display_yellow(" ,press f to thrown cowries");
+
+                std::cin >> ch;
+                if (ch == 'f')
+                {
+
+                    c.cowry_throw();
+                    int score = c.getCount();
+
+                    window->display_yellow("You got: ");
+                    window->display_blue(score);
+                    std::cout << std::endl;
+
+                    //Add 3sec delay
+                    usleep(3 * 1000000);//sleeps for 3 second
+
+                    switch (score)
+                    {
+                    case 1:
+                        window->display_yellow("Press 'k' to tale out king or press 'p' to take out pawn, press 'c' to skip daa: ");
+                        ch = window->get_char();
+                        while(ch != 'k' && ch != 'p' && ch != 'c')
+                        {
+                            ch = window->get_char();
+                        }
+                        
+                        if(ch == 'k' || ch == 'p')
+                        {
+                            // Player opted for daa
+                            if (p2.daa_check(ch))
+                            {
+                                // remove a pawn
+                                
+                            }
+                            else
+                            {
+                                //daa already done, account as one
+                                p2.move_piece(1);
+                            }
+                        }
+                        else if(ch == 'c')
+                        {
+                            p2.move_piece(1);
+                        }
+
+                        break;
+                    case 2:
+                        if(p2.check_daa_initiated())
+                        {
+                            p2.move_piece(2);
+                        }
+                        
+                        toggle_turns(p1,p2);
+                        break;
+                    case 3:
+                        if(p2.check_daa_initiated())
+                        {
+                             p2.move_piece(3);
+                        }
+                       
+                        toggle_turns(p1,p2);
+                        break;
+                    case 4:
+                        if(p2.check_daa_initiated())
+                        {
+                            p2.move_piece(4);
+                        }
+                        
+                        toggle_turns(p1,p2);
+                        break;
+                    case 10:
+                        if(p2.check_daa_initiated())
+                        {
+                            p2.move_piece(10);
+                        }
+                        break;
+                    default:
+                        toggle_turns(p1,p2);
+                        break;
+                    }
+
+                    window->clear();
+                    gb.set_board(p1, p2);
+                }
+
+                else
+                {
+                    window->display_yellow("wrong key pressed!\n");
+                }
+
             }
 
-        }
+            //Check clashes
+            check_clashes(p1,p2);
 
+
+        }
     }
     else if (choice == '2')
     {

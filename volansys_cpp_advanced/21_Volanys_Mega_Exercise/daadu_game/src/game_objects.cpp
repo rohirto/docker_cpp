@@ -84,7 +84,12 @@ game_board::game_board()
 
     //board = std::vector<std::vector<std::vector<char>>>(getheight(), std::vector<std::vector<char>>(getwidth(), std::vector<char>(3, ' ')));
 
-    for(int i = 0; i < getheight(); i++)  //6
+    board_reset();
+}
+
+void::game_board::board_reset()
+{
+   for(int i = 0; i < getheight(); i++)  //6
     {
         for(int j = 0; j < getwidth(); j++) //16
         {
@@ -133,103 +138,103 @@ game_board::game_board()
             
         }
 
-    }
+    } 
 }
 
 void game_board::set_board( player& p1,  player& p2)
 {
+    //Set default g_board values, without pawns
+    board_reset();
+
+
     // Position player pawns
-    std::map<int, std::pair<int, int>> player1_pos = p1.get_pos();
-    std::map<int, std::pair<int, int>> player2_pos = p2.get_pos();
+    std::map<int, pawn> player1_pawn_pos = p1.pawn_get_pos();
+    std::map<int, king> player1_king_pos = p1.king_get_pos();
+    
+    std::map<int, pawn> player2_pawn_pos = p2.pawn_get_pos();
+    std::map<int, king> player2_king_pos = p2.king_get_pos();
 
-    for (const auto &goti : player1_pos)
+    for (const auto& goti : player1_pawn_pos)
     {
-        // 1 to 8 goti is pawns
-        if(goti.first != 9) //Not a king
+
+        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
         {
-            if ((goti.second.first == 0 || goti.second.first == 5) || (goti.second.second == 0 || goti.second.second == 5 || goti.second.second == 10 || goti.second.second == 15))
-            {
-                
-                //board[goti.second.first][goti.second.second] = pawn_box;
-                g_board[goti.second.first][goti.second.second] = pawn_b;
-                g_board[goti.second.first][goti.second.second].color = 'r';
-                
-                
-            }
-            else
-            {
-                // Still in house
-                //board[goti.second.first][goti.second.second] = pawn_char;
-                g_board[goti.second.first][goti.second.second] = pawn_c;
-                g_board[goti.second.first][goti.second.second].color = 'r';
-            }
-        }
-        else // 9 goti is king
-        {
-            if ((goti.second.first == 0 || goti.second.first == 5) || (goti.second.second == 0 || goti.second.second == 5 || goti.second.second == 10 || goti.second.second == 15))
-            {
-                
-                //board[goti.second.first][goti.second.second] = king_box;
-                g_board[goti.second.first][goti.second.second] = king_b;
-                g_board[goti.second.first][goti.second.second].color = 'r';
-            }
-            else
-            {
-                // Still in house
-                //board[goti.second.first][goti.second.second] = king_char;
-                g_board[goti.second.first][goti.second.second] = king_c;
-                g_board[goti.second.first][goti.second.second].color = 'r';
-                
-            }
+            
+            g_board[goti.second.position.first][goti.second.position.second] = pawn_b;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
 
         }
-
-        
+        else
+        {
+            // Still in house
+            // board[goti.second.first][goti.second.second] = pawn_char;
+            g_board[goti.second.position.first][goti.second.position.second] = pawn_c;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
+        }
     }
-    for (const auto &goti : player2_pos)
+    for (const auto &goti : player1_king_pos)
     {
-        // 1 to 8 goti is pawns
-        if(goti.first != 9) //Not a king
-        {
-            if ((goti.second.first == 0 || goti.second.first == 5) || (goti.second.second == 0 || goti.second.second == 5 || goti.second.second == 10 || goti.second.second == 15))
-            {
-                
-                //board[goti.second.first][goti.second.second] = pawn_box;
-                g_board[goti.second.first][goti.second.second] = pawn_b;
-                g_board[goti.second.first][goti.second.second].color = 'g';
-                
-            }
-            else
-            {
-                // Still in house
-                //board[goti.second.first][goti.second.second] = pawn_char;
-                g_board[goti.second.first][goti.second.second] = pawn_c;
-                g_board[goti.second.first][goti.second.second].color = 'g';
-            }
-        }
-        else // 9 goti is king
-        {
-            if ((goti.second.first == 0 || goti.second.first == 5) || (goti.second.second == 0 || goti.second.second == 5 || goti.second.second == 10 || goti.second.second == 15))
-            {
-                
-                //board[goti.second.first][goti.second.second] = king_box;
-                g_board[goti.second.first][goti.second.second] = king_b;
-                g_board[goti.second.first][goti.second.second].color = 'g';
-            }
-            else
-            {
-                // Still in house
-                //board[goti.second.first][goti.second.second] = king_char;
-                g_board[goti.second.first][goti.second.second] = king_c;
-                g_board[goti.second.first][goti.second.second].color = 'g';
-                
-            }
+        // King
 
-        }
+        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
+        {
 
-        
+            // board[goti.second.first][goti.second.second] = king_box;
+            g_board[goti.second.position.first][goti.second.position.second] = king_b;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
+        }
+        else
+        {
+            // Still in house
+            // board[goti.second.first][goti.second.second] = king_char;
+            g_board[goti.second.position.first][goti.second.position.second] = king_c;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
+        }
     }
+    for (const auto& goti : player2_pawn_pos)
+    {
 
+        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
+        {
+
+            g_board[goti.second.position.first][goti.second.position.second] = pawn_b;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+        }
+        else
+        {
+            // Still in house
+            // board[goti.second.first][goti.second.second] = pawn_char;
+            g_board[goti.second.position.first][goti.second.position.second] = pawn_c;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+        }
+    }
+    for (const auto &goti : player2_king_pos)
+    {
+        // King
+
+        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
+        {
+
+            // board[goti.second.first][goti.second.second] = king_box;
+            g_board[goti.second.position.first][goti.second.position.second] = king_b;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+        }
+        else
+        {
+            // Still in house
+            // board[goti.second.first][goti.second.second] = king_char;
+            g_board[goti.second.position.first][goti.second.position.second] = king_c;
+            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
+            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+        }
+    }
     for(int i = 0; i < getheight(); i++)
     {
         for(int j = 0; j < getwidth(); j++)
@@ -296,21 +301,31 @@ void game_board::print_player_box(const box& box)
 {
     for(char ch: box.box_content)
     {
-        if(ch != '[' && ch != ']')
+        if(ch != '[' && ch != ']' && ch != ' ')
         {
             //print in color
             switch (box.color)
             {
             case 'r':
-                display_red(ch);
+                if(box.piece_no != 9)
+                    display_red(box.piece_no);
+                else   
+                    display_red(KING_CHAR);
                 break;
             case 'g':
-                display_green(ch);
+                if(box.piece_no != 9)
+                    display_green(box.piece_no);
+                else
+                    display_green(KING_CHAR);
                 break;
             
             default:
                 break;
             }
+        }
+        else
+        {
+            std::cout << ch;
         }
     }
 }
@@ -330,7 +345,7 @@ void cowries::cowry_throw()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> distribution(ALL_FRONT_FACING, FIVE_FRONT_FACING);
+    std::uniform_int_distribution<int> distribution(NONE_FRONT_FACING, ALL_FRONT_FACING);
 
     // Generate a random value from the enum
     position =  static_cast<cowry_position>(distribution(gen));
@@ -350,8 +365,8 @@ int cowries::getCount() const {
             return 3;
         case FOUR_FRONT_FACING:
             return 4;
-        case FIVE_FRONT_FACING:
-            return 5;
+        case NONE_FRONT_FACING:
+            return 0;
         default:
             return 0; // Handle other cases if needed
     }

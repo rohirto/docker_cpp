@@ -8,3 +8,54 @@
  * @copyright Copyright (c) 2024 Volansys Technologies
  * 
  */
+
+#include <iostream>
+#include  <bits/stdc++.h> 
+#include <limits>
+#include "screen.h"
+
+char screen::get_char()
+{
+    char ch;
+
+    std::cin >> ch;
+
+    while (!isalpha(ch))
+    {
+        std::cin.clear();                                                   // Clear the error state
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard invalid input
+
+        display_red("\n Invalid entry try again: ");
+        std::cin >> ch;
+    }
+
+    return ch;
+}
+
+int screen::get_int()
+{
+    int ch;
+
+    std::cin >> ch;
+
+    while(!std::cin.good())
+    {
+        display_red("Invalid Input, try again: ");
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin >> ch;
+    }
+
+    return ch;
+}
+
+std::string screen::get_string()
+{
+    std::string s;
+
+    std::getline(std::cin >> std::ws,s);
+
+    return s;
+
+
+}

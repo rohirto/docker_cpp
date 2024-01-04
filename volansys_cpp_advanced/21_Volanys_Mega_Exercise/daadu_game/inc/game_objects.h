@@ -26,12 +26,12 @@
 
 //Cowry handling
 enum cowry_position {
-    ALL_FRONT_FACING,
+    NONE_FRONT_FACING,
     ONE_FRONT_FACING,
     TWO_FRONT_FACING,
     THREE_FRONT_FACING,
     FOUR_FRONT_FACING,
-    FIVE_FRONT_FACING
+    ALL_FRONT_FACING
 };
 
 class cowries {
@@ -51,6 +51,8 @@ class box{
 public:
     char color;
     std::vector<char> box_content;
+    int max_pieces;  //max pieces that are currently housed into that box
+    int piece_no;  //1 to 8 for pawn, 9 for king
 
     bool operator==(box const& other);
 };
@@ -65,17 +67,11 @@ class game_board: virtual public screen, public menu, public box{
     box pawn_c;
     box king_c;
 
+    std::map<int,box> pawn_boxes;
+
     std::vector<std::vector<box>> g_board;
 
-    // std::vector<char> empty_box;
-    // std::vector<char> pawn_box;
-    // std::vector<char> king_box;
-    // std::vector<char> check_pt_box;
-    // std::vector<char> empty_space;
-    // std::vector<char> pawn_char;
-    // std::vector<char> king_char;
-    
-    //std::vector<std::vector<std::vector<char>>> board;   //Board
+
     
 
 
@@ -89,6 +85,7 @@ private:
     
     void print_box(const box& box);
     void print_player_box(const box& box);
+    void board_reset();
 
 };
 

@@ -90,6 +90,10 @@ public:
     int getwidth(){return width;}
     int getheight(){return height;}
 
+    char get_char();
+    int get_int();
+    std::string get_string();
+
 
     //Vitual funcs
     virtual char display_menu()=0;
