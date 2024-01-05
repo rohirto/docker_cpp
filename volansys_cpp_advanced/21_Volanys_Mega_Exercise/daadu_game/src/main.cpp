@@ -28,11 +28,6 @@ void toggle_turns(player& p1, player& p2)
     }
 }
 
-void check_clashes(player& p1, player& p2)
-{
-    
-}
-
 int main()
 {
     screen *window;  //Polymorphic class
@@ -108,6 +103,7 @@ int main()
                         else if(ch == 'c')
                         {
                             p1.move_piece(1,p2);
+                            toggle_turns(p1,p2);
                         }
                         break;
                     case 2:
@@ -251,8 +247,8 @@ int main()
 
             }
 
-            //Check clashes
-            check_clashes(p1,p2);
+            
+            
 
 
         }

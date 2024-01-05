@@ -21,8 +21,9 @@
 //Defines
 #define BOX_NUM         3
 #define PAWN_CHAR       'O'
-#define KING_CHAR       '#'
+#define KING_CHAR       'K'
 #define CHECK_PT_CHAR   'X'
+#define SAFE_BOX_CHAR   'X'
 
 //Cowry handling
 enum cowry_position {
@@ -47,6 +48,8 @@ private:
 };
 
 
+
+
 class box{
 public:
     char color;
@@ -62,10 +65,12 @@ class game_board: virtual public screen, public menu, public box{
     box empty_b;
     box pawn_b;
     box king_b;
-    box check_pt_b;
+    box p1_check_pt_b;
+    box p2_check_pt_b;
     box empty_s;
     box pawn_c;
     box king_c;
+    box safe_b;
 
     std::map<int,box> pawn_boxes;
 
@@ -85,6 +90,7 @@ private:
     
     void print_box(const box& box);
     void print_player_box(const box& box);
+    void print_check_point_box(const box& box);
     void board_reset();
 
 };

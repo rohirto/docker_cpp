@@ -35,6 +35,19 @@ const std::pair<int,int> player_1_house_p8(4,2);
 const std::pair<int,int> player_1_house_k(3,3);
 
 
+//Check point pairs
+const std::pair<int,int> player_1_cp_p1(1,6);
+const std::pair<int,int> player_1_cp_p2(1,7);
+const std::pair<int,int> player_1_cp_p3(2,6);
+const std::pair<int,int> player_1_cp_p4(2,7);
+const std::pair<int,int> player_1_cp_p5(3,6);
+const std::pair<int,int> player_1_cp_p6(3,7);
+const std::pair<int,int> player_1_cp_p7(4,6);
+const std::pair<int,int> player_1_cp_p8(4,7);
+
+const std::pair<int,int> player_1_cp_k(0,7);
+
+
 
 const std::pair<int,int> player_2_house_p1(1,13);
 const std::pair<int,int> player_2_house_p2(1,14);
@@ -47,104 +60,113 @@ const std::pair<int,int> player_2_house_p8(4,14);
 
 const std::pair<int,int> player_2_house_k(3,12);
 
+//Check point pairs
+
+const std::pair<int,int> player_2_cp_p1(1,8);
+const std::pair<int,int> player_2_cp_p2(1,9);
+const std::pair<int,int> player_2_cp_p3(2,8);
+const std::pair<int,int> player_2_cp_p4(2,9);
+const std::pair<int,int> player_2_cp_p5(3,8);
+const std::pair<int,int> player_2_cp_p6(3,9);
+const std::pair<int,int> player_2_cp_p7(4,8);
+const std::pair<int,int> player_2_cp_p8(4,9);
+
+const std::pair<int,int> player_2_cp_k(0,8);
+
 
 //Player 1 map
 
-const std::pair<int,int> player1_map_1(5, 0); // i,j value on the game board
+const std::pair<int,int> player1_map_1(5, 0); // i,j value on the game board //Safe
 const std::pair<int,int> player1_map_2(4, 0);
 const std::pair<int,int> player1_map_3(3, 0);
 const std::pair<int,int> player1_map_4(2, 0);
 const std::pair<int,int> player1_map_5(1, 0);
-const std::pair<int,int> player1_map_6(0, 0);
+const std::pair<int,int> player1_map_6(0, 0); //Safe
 const std::pair<int,int> player1_map_7(0, 1);
 const std::pair<int,int> player1_map_8(0, 2);
 const std::pair<int,int> player1_map_9(0, 3);
 const std::pair<int,int> player1_map_10(0, 4);
-const std::pair<int,int> player1_map_11(0, 5);
+const std::pair<int,int> player1_map_11(0, 5); //Safe
 const std::pair<int,int> player1_map_12(1, 5);
 const std::pair<int,int> player1_map_13(2, 5);
 const std::pair<int,int> player1_map_14(3, 5);
 const std::pair<int,int> player1_map_15(4, 5);
-const std::pair<int,int> player1_map_16(5, 5);
+const std::pair<int,int> player1_map_16(5, 5); //Safe
 const std::pair<int,int> player1_map_17(5, 6);
-const std::pair<int,int> player1_map_18(5, 7);
+const std::pair<int,int> player1_map_18(5, 7); 
 const std::pair<int,int> player1_map_19(5, 8);
 const std::pair<int,int> player1_map_20(5, 9);
-const std::pair<int,int> player1_map_21(5, 10);
+const std::pair<int,int> player1_map_21(5, 10); //Safe
 const std::pair<int,int> player1_map_22(4, 10);
 const std::pair<int,int> player1_map_23(3, 10);
 const std::pair<int,int> player1_map_24(2, 10);
 const std::pair<int,int> player1_map_25(1, 10);
-const std::pair<int,int> player1_map_26(0, 10);
+const std::pair<int,int> player1_map_26(0, 10);  //Check point
 
 
 
 //Player 2 map
-const std::pair<int,int> player2_map_1(5,15); // i,j value on the game board
+const std::pair<int,int> player2_map_1(5,15); // i,j value on the game board //Safe
 const std::pair<int,int> player2_map_2(4,15);
 const std::pair<int,int> player2_map_3(3,15);
 const std::pair<int,int> player2_map_4(2,15);
 const std::pair<int,int> player2_map_5(1,15);
-const std::pair<int,int> player2_map_6(0,15);
+const std::pair<int,int> player2_map_6(0,15); //Safe
 const std::pair<int,int> player2_map_7(0,14);
 const std::pair<int,int> player2_map_8(0,13);
 const std::pair<int,int> player2_map_9(0,12);
 const std::pair<int,int> player2_map_10(0,11);
-const std::pair<int,int> player2_map_11(0,10);
+const std::pair<int,int> player2_map_11(0,10); //Safe
 const std::pair<int,int> player2_map_12(1,10);
 const std::pair<int,int> player2_map_13(2,10);
 const std::pair<int,int> player2_map_14(3,10);
 const std::pair<int,int> player2_map_15(4,10);
-const std::pair<int,int> player2_map_16(5,10);
+const std::pair<int,int> player2_map_16(5,10); //Safe
 const std::pair<int,int> player2_map_17(5,9);
 const std::pair<int,int> player2_map_18(5,8);
 const std::pair<int,int> player2_map_19(5,7);
 const std::pair<int,int> player2_map_20(5,6);
-const std::pair<int,int> player2_map_21(5,5);
+const std::pair<int,int> player2_map_21(5,5); //Safe
 const std::pair<int,int> player2_map_22(4,5);
 const std::pair<int,int> player2_map_23(3,5);
 const std::pair<int,int> player2_map_24(2,5);
 const std::pair<int,int> player2_map_25(1,5);
-const std::pair<int,int> player2_map_26(0,5);
+const std::pair<int,int> player2_map_26(0,5); //Cehckpoint
 
 
-class pawn{
-    bool is_daa_done;
+class piece{
+    std::pair<int,int> position;
     
+    bool is_king;
+    bool is_daa_done;
+    bool is_check_point_reached;
 
-public:
-    std::pair<int, int> position; // ij position of the pawn
-    int step_no;  //Mapped with player map first
-    pawn(){};
-    pawn(bool val, const std::pair<int,int>& pos):is_daa_done(val),position(pos),step_no(0){}
-    void setpostion(int i, int j);
-    void set_daa(const bool& val);
-    bool daa_check();
+public: 
+    //Public members
+    int step_no;
+
+    piece(){position = player1_map_1; is_king = false; is_daa_done = false; step_no = 0; is_check_point_reached=false;}
+    piece(const bool val, const bool king_val, const std::pair<int, int>& pos)
+    : position(pos), is_king(king_val), is_daa_done(val), step_no(0), is_check_point_reached(false) {}
+    void setpostion(const std::pair<int,int>& pos){position = pos;};
+    bool daa_check(){return is_daa_done ;}
+    void set_daa(const bool& val){is_daa_done = val;}
+    std::pair<int,int> getposition(){return position;}
+    bool is_p_king() { return is_king; }
+    void set_checkpt(bool val){ is_check_point_reached = val;}
+    bool checkpt_check(){return is_check_point_reached;}
+
 
 };
 
-class king{
-    bool is_daa_done;
-    
 
-public:
-    std::pair<int, int> position; // ij position of the pawn 
-    int step_no;  //Mapped with player map first
-    king(){};
-    king(bool val, const std::pair<int,int>& pos):is_daa_done(val),position(pos),step_no(0){}
-    void setpostion(int i, int j);
-    void set_daa(const bool& val);
-    bool daa_check();
-
-};
-
-class player:virtual public pawn, virtual public king, public menu{
+class player: virtual public piece, public menu{
     std::string name;
     int player_no; //1 or 2
     bool turn;   //true if player's turn 
     bool daa_initiated;
-    std::map<int,pawn> pawn_pos; //Status of the pawn 
-    std::map<int,king> king_pos;    //Status of king
+    std::map<int,piece> pawn_pos; //Status of the pawn 
+    piece king_pos;    //Status of king
 
     std::map<int,std::pair<int,int>> player_map; // 26 steps that player has to complete
 
@@ -156,16 +178,18 @@ public:
     player();
     void setname();
     std::string getname();
-    std::map<int,pawn> pawn_get_pos();
-    std::map<int,king> king_get_pos();
+    std::map<int,piece> pawn_get_pos();
+    piece king_get_pos();
 
     void set_turn(bool val);
     bool get_turn(){return turn;}
     bool daa_check(char c);
     void move_piece( int steps, player& other);
     bool check_daa_initiated(){return daa_initiated;}
-    void set_pawn_back(pawn& p, int no);
-    void set_king_back(king& k, int no);
+    void set_piece_back(piece& p, int no, int player_no);
+    bool check_piece_safe(piece& p, const player& other, int& pos);
+    bool if_check_pt_reached(piece& p);
+
     
 
 };

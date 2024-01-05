@@ -16,65 +16,49 @@
 
 game_board::game_board()
 {
-    //Empty box init
-    // empty_box.push_back('[');
-    // empty_box.push_back(' ');
-    // empty_box.push_back(']');
 
     empty_b.box_content.push_back('[');
     empty_b.box_content.push_back(' ');
     empty_b.box_content.push_back(']');
 
-    //Pawn box
-    // pawn_box.push_back('[');
-    // pawn_box.push_back(PAWN_CHAR);
-    // pawn_box.push_back(']');
 
 
     pawn_b.box_content.push_back('[');
     pawn_b.box_content.push_back(PAWN_CHAR);
     pawn_b.box_content.push_back(']');
 
-    //King Box
-    // king_box.push_back('[');
-    // king_box.push_back(KING_CHAR);
-    // king_box.push_back(']');
 
     king_b.box_content.push_back('[');
     king_b.box_content.push_back(KING_CHAR);
     king_b.box_content.push_back(']');
 
-    //Check point box
-    // check_pt_box.push_back('[');
-    // check_pt_box.push_back(CHECK_PT_CHAR);
-    // check_pt_box.push_back(']');
+    safe_b.box_content.push_back('[');
+    safe_b.box_content.push_back(SAFE_BOX_CHAR);
+    safe_b.box_content.push_back(']');
 
-    check_pt_b.box_content.push_back('[');
-    check_pt_b.box_content.push_back(CHECK_PT_CHAR);
-    check_pt_b.box_content.push_back(']');
 
-    //Empty space init
-    // empty_space.push_back(' ');
-    // empty_space.push_back(' ');
-    // empty_space.push_back(' ');
+    p1_check_pt_b.box_content.push_back('[');
+    p1_check_pt_b.box_content.push_back(CHECK_PT_CHAR);
+    p1_check_pt_b.box_content.push_back(']');
+    p1_check_pt_b.color = 'r';
+
+    p2_check_pt_b.box_content.push_back('[');
+    p2_check_pt_b.box_content.push_back(CHECK_PT_CHAR);
+    p2_check_pt_b.box_content.push_back(']');
+    p2_check_pt_b.color = 'g';
+
 
     empty_s.box_content.push_back(' ');
     empty_s.box_content.push_back(' ');
     empty_s.box_content.push_back(' ');
     
 
-    // pawn_char.push_back(' ');
-    // pawn_char.push_back(PAWN_CHAR);
-    // pawn_char.push_back(' ');
 
     pawn_c.box_content.push_back(' ');
     pawn_c.box_content.push_back(PAWN_CHAR);
     pawn_c.box_content.push_back(' ');
     
 
-    // king_char.push_back(' ');
-    // king_char.push_back(KING_CHAR);
-    // king_char.push_back(' ');
 
     king_c.box_content.push_back(' ');
     king_c.box_content.push_back(KING_CHAR);
@@ -97,7 +81,20 @@ void::game_board::board_reset()
             {
                 
                 //board[i][j] = check_pt_box;
-                g_board[i][j] = check_pt_b;
+                if(i == 0 && j == 5)
+                {
+                    //p2 check point
+                    g_board[i][j] = p2_check_pt_b;
+                }
+                else if(i == 0 && j == 10)
+                {
+                    g_board[i][j] = p1_check_pt_b;
+                }
+                else
+                {
+                    g_board[i][j] = safe_b;
+                }
+                
             }
             else if((j == 0 || j == 5 || j == 10 || j == 15)&&(i == 1 || i == 2 || i == 3 || i == 4))
             {
@@ -148,93 +145,92 @@ void game_board::set_board( player& p1,  player& p2)
 
 
     // Position player pawns
-    std::map<int, pawn> player1_pawn_pos = p1.pawn_get_pos();
-    std::map<int, king> player1_king_pos = p1.king_get_pos();
+    std::map<int, piece> player1_pawn_pos = p1.pawn_get_pos();
+    piece player1_king_pos = p1.king_get_pos();
     
-    std::map<int, pawn> player2_pawn_pos = p2.pawn_get_pos();
-    std::map<int, king> player2_king_pos = p2.king_get_pos();
+    std::map<int, piece> player2_pawn_pos = p2.pawn_get_pos();
+    piece player2_king_pos = p2.king_get_pos();
 
-    for (const auto& goti : player1_pawn_pos)
+    for ( auto& p_info : player1_pawn_pos)
     {
-
-        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
+        std::pair<int,int> temp = p_info.second.getposition();
+        if ((temp.first == 0 || temp.first == 5 )|| (temp.second == 0 || temp.second == 5 || temp.second == 10 || temp.second == 15))
         {
             
-            g_board[goti.second.position.first][goti.second.position.second] = pawn_b;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
+            g_board[temp.first][temp.second] = pawn_b;
+            g_board[temp.first][temp.second].piece_no = p_info.first;
+            g_board[temp.first][temp.second].color = 'r';
 
         }
         else
         {
             // Still in house
             // board[goti.second.first][goti.second.second] = pawn_char;
-            g_board[goti.second.position.first][goti.second.position.second] = pawn_c;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
+            g_board[temp.first][temp.second] = pawn_c;
+            g_board[temp.first][temp.second].piece_no = p_info.first;
+            g_board[temp.first][temp.second].color = 'r';
         }
     }
-    for (const auto &goti : player1_king_pos)
+
+    // King
+    std::pair<int, int> k_temp = player1_king_pos.getposition();
+    if ((k_temp.first == 0 || k_temp.first == 5) || (k_temp.second == 0 || k_temp.second == 5 || k_temp.second == 10 || k_temp.second == 15))
     {
-        // King
 
-        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
-        {
-
-            // board[goti.second.first][goti.second.second] = king_box;
-            g_board[goti.second.position.first][goti.second.position.second] = king_b;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
-        }
-        else
-        {
-            // Still in house
-            // board[goti.second.first][goti.second.second] = king_char;
-            g_board[goti.second.position.first][goti.second.position.second] = king_c;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'r';
-        }
+        // board[goti.second.first][goti.second.second] = king_box;
+        g_board[k_temp.first][k_temp.second] = king_b;
+        g_board[k_temp.first][k_temp.second].piece_no = 9;
+        g_board[k_temp.first][k_temp.second].color = 'r';
     }
-    for (const auto& goti : player2_pawn_pos)
+    else
     {
+        // Still in house
+        // board[goti.second.first][goti.second.second] = king_char;
+        g_board[k_temp.first][k_temp.second] = king_c;
+        g_board[k_temp.first][k_temp.second].piece_no = 9;
+        g_board[k_temp.first][k_temp.second].color = 'r';
+    }
+    for ( auto& p_info : player2_pawn_pos)
+    {
+        std::pair<int,int> temp = p_info.second.getposition();
 
-        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
+        if ((temp.first == 0 || temp.first == 5) || (temp.second == 0 || temp.second == 5 || temp.second == 10 || temp.second == 15))
         {
 
-            g_board[goti.second.position.first][goti.second.position.second] = pawn_b;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+            g_board[temp.first][temp.second] = pawn_b;
+            g_board[temp.first][temp.second].piece_no = p_info.first;
+            g_board[temp.first][temp.second].color = 'g';
         }
         else
         {
             // Still in house
             // board[goti.second.first][goti.second.second] = pawn_char;
-            g_board[goti.second.position.first][goti.second.position.second] = pawn_c;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = goti.first;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+            g_board[temp.first][temp.second] = pawn_c;
+            g_board[temp.first][temp.second].piece_no = p_info.first;
+            g_board[temp.first][temp.second].color = 'g';
         }
     }
-    for (const auto &goti : player2_king_pos)
-    {
-        // King
 
-        if ((goti.second.position.first == 0 || goti.second.position.first == 5) || (goti.second.position.second == 0 || goti.second.position.second == 5 || goti.second.position.second == 10 || goti.second.position.second == 15))
+        // King
+        k_temp = player2_king_pos.getposition();
+
+        if ((k_temp.first == 0 || k_temp.first == 5) || (k_temp.second == 0 || k_temp.second == 5 || k_temp.second == 10 || k_temp.second == 15))
         {
 
             // board[goti.second.first][goti.second.second] = king_box;
-            g_board[goti.second.position.first][goti.second.position.second] = king_b;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+            g_board[k_temp.first][k_temp.second] = king_b;
+            g_board[k_temp.first][k_temp.second].piece_no = 9;
+            g_board[k_temp.first][k_temp.second].color = 'g';
         }
         else
         {
             // Still in house
             // board[goti.second.first][goti.second.second] = king_char;
-            g_board[goti.second.position.first][goti.second.position.second] = king_c;
-            g_board[goti.second.position.first][goti.second.position.second].piece_no = 9;
-            g_board[goti.second.position.first][goti.second.position.second].color = 'g';
+            g_board[k_temp.first][k_temp.second] = king_c;
+            g_board[k_temp.first][k_temp.second].piece_no = 9;
+            g_board[k_temp.first][k_temp.second].color = 'g';
         }
-    }
+    
     for(int i = 0; i < getheight(); i++)
     {
         for(int j = 0; j < getwidth(); j++)
@@ -276,6 +272,10 @@ void game_board::set_board( player& p1,  player& p2)
             {
                 print_player_box(g_board[i][j]);
             }
+            else if (g_board[i][j] == p1_check_pt_b && g_board[i][j] == p2_check_pt_b )
+            {
+                print_check_point_box(g_board[i][j]);
+            }
             else
             {
                 print_box(g_board[i][j]);
@@ -295,6 +295,35 @@ void game_board::print_box(const box& box)
         std::cout << ch;
 
     }
+}
+
+void game_board::print_check_point_box(const box& box)
+{
+    for(char ch: box.box_content)
+    {
+        if(ch != '[' && ch != ']' && ch != ' ')
+        {
+            //print in color
+            switch (box.color)
+            {
+                case 'r':
+                    display_red(ch);
+                    break;
+                case 'g':
+                display_green(ch);
+                    break;
+
+                default:
+                    std::cout << ch;
+            }
+
+        }
+        else
+        {
+            std::cout << ch;
+        }
+    }
+
 }
 
 void game_board::print_player_box(const box& box)
