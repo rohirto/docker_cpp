@@ -28,6 +28,44 @@ void toggle_turns(player& p1, player& p2)
     }
 }
 
+bool player_check(player& p)
+{
+    std::map<int, piece> pos = p.pawn_get_pos();
+    for(auto& pw: pos)
+    {
+        if(!pw.second.checkpt_check())
+        {
+            return false;
+        }
+    }
+    piece k = p.king_get_pos();
+    if(!k.checkpt_check())
+    {
+        return false;
+    }
+
+    return true;
+
+}
+
+bool check_win(player& p1, player& p2)
+{
+    
+    if(player_check(p1))
+    {
+        std::cout << p1.getname() << " Wins";
+        return true;
+
+    }
+    else if(player_check(p2))
+    {
+        std::cout << p2.getname() << "Wins";
+        return true;
+    }
+
+    return false;
+}
+
 int main()
 {
     screen *window;  //Polymorphic class
@@ -247,7 +285,11 @@ int main()
 
             }
 
-            
+            //check win
+            if(check_win(p1,p2))
+            {
+                break;
+            }
             
 
 
