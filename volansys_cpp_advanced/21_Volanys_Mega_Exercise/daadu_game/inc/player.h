@@ -145,9 +145,9 @@ public:
     //Public members
     int step_no;
 
-    piece(){position = player1_map_1; is_king = false; is_daa_done = false; step_no = 0; is_check_point_reached=false;}
+    piece(){position = player1_map_1; is_king = false; is_daa_done = false; is_check_point_reached=false; step_no = 0;}
     piece(const bool val, const bool king_val, const std::pair<int, int>& pos)
-    : position(pos), is_king(king_val), is_daa_done(val), step_no(0), is_check_point_reached(false) {}
+    : position(pos), is_king(king_val), is_daa_done(val), is_check_point_reached(false),step_no(0) {}
     void setpostion(const std::pair<int,int>& pos){position = pos;};
     bool daa_check(){return is_daa_done ;}
     void set_daa(const bool& val){is_daa_done = val;}
@@ -155,6 +155,9 @@ public:
     bool is_p_king() { return is_king; }
     void set_checkpt(bool val){ is_check_point_reached = val;}
     bool checkpt_check(){return is_check_point_reached;}
+
+    bool operator!=(const piece& other){if(is_king == other.is_king && position == other.position &&  
+                                         is_daa_done == other.is_daa_done ){return false;} return true;};
 
 
 };
@@ -165,6 +168,7 @@ class player: virtual public piece, public menu{
     int player_no; //1 or 2
     bool turn;   //true if player's turn 
     bool daa_initiated;
+    bool has_killed;
     std::map<int,piece> pawn_pos; //Status of the pawn 
     piece king_pos;    //Status of king
 
@@ -175,7 +179,8 @@ class player: virtual public piece, public menu{
 
 
 public:
-    player();
+    player(){}
+    player(int no);
     void setname();
     std::string getname();
     std::map<int,piece> pawn_get_pos();
@@ -186,9 +191,14 @@ public:
     bool daa_check(char c);
     void move_piece( int steps, player& other);
     bool check_daa_initiated(){return daa_initiated;}
+    void set_daa_initiated(bool val){daa_initiated = val;}
     void set_piece_back(piece& p, int no, int player_no);
     bool check_piece_safe(piece& p, const player& other, int& pos);
     bool if_check_pt_reached(piece& p);
+    bool get_kill(){return has_killed;}
+
+private:
+    bool helper_move_piece(piece& p,int steps,int piece_no, player& other);
 
     
 

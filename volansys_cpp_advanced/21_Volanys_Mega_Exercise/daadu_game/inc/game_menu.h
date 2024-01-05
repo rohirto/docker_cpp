@@ -20,6 +20,8 @@ class menu: virtual public screen{
 
 public:
     char display_menu();
+    char display_cowry_menu(std::string_view name);
+    char display_daa_menu();
 
 
 };

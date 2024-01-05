@@ -291,15 +291,18 @@ bool player::if_check_pt_reached(piece &p)
     return false;
 }
 
-player::player()
+player::player(int no)
 {
-    display_yellow("Enter Player name: ");
+    display_yellow("Enter Player ");
+    display_yellow(no);
+    display_yellow(" name: ");
     name = get_string();
-    display_yellow("Set player number (1 or 2): ");
-    player_no = get_int();
+    //display_yellow("Set player number (1 or 2): ");
+    player_no = no;
 
     turn = false;
     daa_initiated = false;
+    has_killed = false;
 
     if (player_no == 1)
     {
@@ -428,184 +431,44 @@ bool player::daa_check(char c) // if c == p -> pawn, if c== k -> king
     return false;
 }
 
-void player::move_piece(int steps, player &other)
+bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
 {
-
-    while (1)
+    int temp = 0;
+    int temp_step_no = 0;
+    if (p.daa_check())
     {
-        display_yellow("Enter Piece no to move or '9' to move king: ");
-        int piece_no = get_int();
-        int temp = 0;
-
-        if (piece_no < 9)
+        temp_step_no = p.step_no + steps;
+        if (temp_step_no <= 26)
         {
-            // Check daa
-            if (pawn_pos[piece_no].daa_check())
+            std::pair<int, int> new_pos = player_map[temp_step_no];
+            // if(player_map[pawn_pos[piece].step_no] == other.player_map[other.pawn_pos[piece].step_no])
+            if (std::any_of(other.pawn_pos.begin(), other.pawn_pos.end(), [&piece_no, &temp,&new_pos](std::pair<int, piece> op)    //anyof loop to see if other pawn piece clash with our piece
+                            { if( op.second.getposition() == new_pos){temp = op.first; return true;} return false; }) ||
+                [&other, &temp,&new_pos]()
+                {if( other.king_pos.getposition() == new_pos){temp = 9; return true;} return false; }() //IIFE for other's kingpos clash
+                )
             {
-                temp = pawn_pos[piece_no].step_no + steps;
-                if (temp <= 26)
+                if (temp != 9)
                 {
-                    pawn_pos[piece_no].step_no = temp;
-                    pawn_pos[piece_no].setpostion(player_map[pawn_pos[piece_no].step_no]);
-                    // if(player_map[pawn_pos[piece].step_no] == other.player_map[other.pawn_pos[piece].step_no])
-                    if (std::any_of(other.pawn_pos.begin(), other.pawn_pos.end(), [this, &piece_no, &temp](std::pair<int, piece> op)
-                                    { if( op.second.getposition() == pawn_pos[piece_no].getposition()){temp = op.first; return true;} return false; }) ||
-                        other.king_pos.getposition() == pawn_pos[piece_no].getposition())
+                    // Check safe condition
+                    if (!check_piece_safe(other.pawn_pos[temp], other, temp)) // Check if the pawn of the other player is safe or not
                     {
-
-                        // Check safe condition
-                        if (!check_piece_safe(other.pawn_pos[temp], other, temp)) // Check if the pawn of the other player is safe or not
-                        {
-                            // Not safe
-                            // Clash has occured
-                            // Send other to home
-                            other.pawn_pos[temp].step_no = 0;
-                            other.pawn_pos[temp].set_daa(false);
-                            set_piece_back(other.pawn_pos[temp], temp, player_no);
-                        }
-                    }
-                    if (if_check_pt_reached(pawn_pos[piece_no])) // Check if reached check point
-                    {
-                        pawn_pos[piece_no].set_checkpt(true);
-                        if (player_no == 1)
-                        {
-                            switch (piece_no)
-                            {
-                            case 1:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p1);
-                                break;
-                            case 2:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p2);
-                                break;
-                            case 3:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p3);
-                                break;
-                            case 4:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p4);
-                                break;
-                            case 5:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p5);
-                                break;
-                            case 6:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p6);
-                                break;
-                            case 7:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p7);
-                                break;
-                            case 8:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_1_cp_p8);
-                                break;
-
-                            default:
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            switch (piece_no)
-                            {
-                            case 1:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p1);
-                                break;
-                            case 2:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p2);
-                                break;
-                            case 3:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p3);
-                                break;
-                            case 4:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p4);
-                                break;
-                            case 5:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p5);
-                                break;
-                            case 6:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p6);
-                                break;
-                            case 7:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p7);
-                                break;
-                            case 8:
-                                /* code */
-                                pawn_pos[piece_no].setpostion(player_2_cp_p8);
-                                break;
-
-                            default:
-                                break;
-                            }
-                        }
+                        // Not safe
+                        // Clash has occured
+                        // Send other to home
+                        other.pawn_pos[temp].step_no = 0;
+                        other.pawn_pos[temp].set_daa(false);
+                        set_piece_back(other.pawn_pos[temp], temp, player_no);
+                        has_killed = true;  //Player has killed other's pawn
                     }
                 }
                 else
                 {
-                    // Illegal and void move
-                    display_red("Not permitted!,press 'q' to give up turn, or any 'r' to move nay other piece\n");
-
-                    char ch = get_char();
-                    if (ch == 'q')
+                    //if pawn killed king, then send only king back
+                    // Check safe condition
+                    if (!check_piece_safe(other.king_pos, other, temp)) // Check if the pawn of the other player is safe or not
                     {
-                        break;
-                    }
-
-                    continue;
-                }
-
-                break;
-            }
-            else
-            {
-                display_red("Cannot move Piece no ");
-                display_blue(piece_no);
-                display_red(",still in house!\n");
-
-                if (steps == 1)
-                {
-                    display_yellow("Do you want to take this piece out (y)?");
-                    char ch = get_char();
-
-                    if (ch == 'y')
-                    {
-                        if (daa_check('p'))
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        else if (piece_no == 9)
-        {
-            // King
-            if (king_pos.daa_check())
-            {
-                temp = king_pos.step_no + steps;
-
-                if (temp <= 26)
-                {
-                    king_pos.step_no = temp;
-                    king_pos.setpostion(player_map[king_pos.step_no]);
-
-                    if (std::any_of(other.pawn_pos.begin(), other.pawn_pos.end(), [this, &piece_no, &temp](std::pair<int, piece> op)
-                                    { if( op.second.getposition() == king_pos.getposition()){temp = op.first; return true;} return false; }) ||
-                        other.king_pos.getposition() == king_pos.getposition())
-                    {
-                        // Check safe
-                        if (!check_piece_safe(king_pos, other, temp))
+                        if(p != king_pos)
                         {
                             // Not safe
                             // Clash has occured
@@ -613,55 +476,187 @@ void player::move_piece(int steps, player &other)
                             other.king_pos.step_no = 0;
                             other.king_pos.set_daa(false);
                             set_piece_back(other.king_pos, temp, player_no);
+
+                            has_killed = true;  //Player has killed other's pieces
+                        }
+                        else
+                        {
+                            //King has killed king, send all pieces to home
+                            other.king_pos.step_no = 0;
+                            other.king_pos.set_daa(false);
+                            other.set_daa_initiated(false);
+                            set_piece_back(other.king_pos,9,player_no);
+                            has_killed = true;  //Player has killed other's pawn
+                            for(auto& p: other.pawn_pos)
+                            {
+                                if(!p.second.checkpt_check())
+                                {
+                                     p.second.step_no = 0;
+                                    p.second.set_daa(false);
+                                    set_piece_back(p.second, p.first, player_no);
+                                    
+                                }
+                               
+                            }
+
                         }
                     }
 
-                    if (if_check_pt_reached(king_pos))
+                }
+
+                p.step_no = temp_step_no;
+                p.setpostion(player_map[p.step_no]);
+            }
+            else if (if_check_pt_reached(p)) // Check if reached check point
+            {
+                if (has_killed)
+                {
+                    p.step_no = temp_step_no;
+                    // Need to have killed to reach checkpoint
+                    p.set_checkpt(true);
+                    switch (piece_no)
                     {
-                        king_pos.set_checkpt(true);
-                        // Check if reached check point
+                    case 1:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p1);
+                        else
+                            p.setpostion(player_2_cp_p1);
+                        break;
+                    case 2:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p2);
+                        else
+                            p.setpostion(player_2_cp_p2);
+                        break;
+                    case 3:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p3);
+                        else
+                            p.setpostion(player_2_cp_p3);
+                        break;
+                    case 4:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p4);
+                        else
+                            p.setpostion(player_2_cp_p4);
+                        break;
+                    case 5:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p5);
+                        else
+                            p.setpostion(player_2_cp_p5);
+                        break;
+                    case 6:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p6);
+                        else
+                            p.setpostion(player_2_cp_p6);
+                        break;
+                    case 7:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p7);
+                        else
+                            p.setpostion(player_2_cp_p7);
+                        break;
+                    case 8:
+                        /* code */
+                        if (player_no == 1)
+                            p.setpostion(player_1_cp_p8);
+                        else
+                            p.setpostion(player_2_cp_p8);
+                        break;
+                    case 9:
                         if (player_no == 1)
                             king_pos.setpostion(player_1_cp_k);
                         else
                             king_pos.setpostion(player_2_cp_k);
+
+                    default:
+                        break;
                     }
                 }
                 else
                 {
-                    // Illegal and void move
-                    display_red("Not permitted!,press 'q' to give up turn\n");
-
-                    char ch = get_char();
-                    if (ch == 'q')
-                    {
-                        break;
-                    }
-                    continue;
+                    display_yellow("Need to take out atleast one piece of other player to reach checkpoint");
                 }
-                break;
             }
             else
             {
-                display_red("Cannot move King ,still in house!\n");
+                //No clash but need to update position
+                p.step_no = temp_step_no;
+                p.setpostion(player_map[p.step_no]);
+            }
+        }
+        else
+        {
+            // Illegal and void move
+            display_red("Not permitted!,press 'q' to give up turn, or any 'r' to move nay other piece\n");
 
-                if (steps == 1)
+            char ch = get_char();
+            if (ch == 'q')
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+    else
+    {
+        display_red("Cannot move Piece no ");
+        display_blue(piece_no);
+        display_red(",still in house!\n");
+
+        if (steps == 1)
+        {
+            display_yellow("Do you want to take this piece out (y)?");
+            char ch = get_char();
+
+            if (ch == 'y')
+            {
+                if (daa_check('p'))
                 {
-                    display_yellow("Do you want to take this piece out (y)?");
-                    char ch = get_char();
-
-                    if (ch == 'y')
-                    {
-                        if (daa_check('k'))
-                        {
-                            break;
-                        }
-                    }
+                    return true;
                 }
             }
         }
 
-        // Pawn piece number
+        return false;
+    }
+}
 
-        // Check daa
+void player::move_piece(int steps, player &other)
+{
+
+    while (1)
+    {
+        display_yellow("Enter Piece no to move or '9' to move king: ");
+        int piece_no = get_int();
+
+        if(piece_no != 9)
+        {
+            if(helper_move_piece(pawn_pos[piece_no],steps, piece_no, other))
+                break;
+            else
+                continue;
+        }
+        else
+        {
+            if(helper_move_piece(king_pos,steps, piece_no, other))
+                break;
+            else
+                continue;
+
+        }
+
     }
 }

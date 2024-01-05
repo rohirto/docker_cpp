@@ -97,6 +97,8 @@ public:
 
     //Vitual funcs
     virtual char display_menu()=0;
+    virtual char display_cowry_menu(std::string_view name)=0;
+    virtual char display_daa_menu()=0;
 };
 
 #endif
