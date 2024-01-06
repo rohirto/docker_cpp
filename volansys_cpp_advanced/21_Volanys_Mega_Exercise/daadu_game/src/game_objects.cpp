@@ -13,7 +13,10 @@
 #include "game_objects.h"
 
 
-
+/**
+ * @brief Construct a new game board::game board object
+ * 
+ */
 game_board::game_board()
 {
 
@@ -71,13 +74,17 @@ game_board::game_board()
     board_reset();
 }
 
-void::game_board::board_reset()
+/**
+ * @brief Reset the Board to default
+ * 
+ */
+void game_board::board_reset()
 {
    for(int i = 0; i < getheight(); i++)  //6
     {
         for(int j = 0; j < getwidth(); j++) //16
         {
-            if((j == 0 || j == 5 || j == 10 || j == 15)&&(i == 0 || i == 5)) //Check point boxes
+            if((j == 0 || j == 5 || j == 10 || j == 15)&&(i == 0 || i == 5)) //Check point boxes and safe boxes
             {
                 
                 //board[i][j] = check_pt_box;
@@ -88,10 +95,12 @@ void::game_board::board_reset()
                 }
                 else if(i == 0 && j == 10)
                 {
+                    //p1 check point 
                     g_board[i][j] = p1_check_pt_b;
                 }
                 else
                 {
+                    //safe boxes
                     g_board[i][j] = safe_b;
                 }
                 
@@ -100,37 +109,37 @@ void::game_board::board_reset()
             {
                 
                 //board[i][j] = empty_box;
-                g_board[i][j] = empty_b;
+                g_board[i][j] = empty_b;  //Ordinary empty boxes
             }
             else if((i == 0 ) && (j == 1 || j == 2 || j == 3 || j == 4 || j == 11 || j == 12 || j == 13 || j == 14) )
             {
                 //board[i][j] = empty_box;
-                g_board[i][j] = empty_b;
+                g_board[i][j] = empty_b; //Ordinary empty boxes
                 
             }
             else if((i == 5) && (j == 6 || j == 7 || j == 8 || j == 9))
             {
                 //board[i][j] = empty_box;
-                g_board[i][j] = empty_b;
+                g_board[i][j] = empty_b;  //Ordinary empty box
             }
             else if((i == 1 || i == 2 || i == 3 || i == 4) && (j == 2 || j == 3))
             {
                 //player 1 house
                 
                 //board[i][j] = empty_space;
-                g_board[i][j] = empty_s;
+                g_board[i][j] = empty_s; //Empty space 
                 
             }
             else if((i == 1 || i == 2 || i == 3 || i == 4) && (j == 13 || j == 14))
             {
                 //Player 2 house
                //board[i][j] = empty_space;
-               g_board[i][j] = empty_s;
+               g_board[i][j] = empty_s; //Empty space 
             }
             else
             {
                 //board[i][j] = empty_space;
-                g_board[i][j] = empty_s;
+                g_board[i][j] = empty_s; //Empty space 
             }
             
         }
@@ -138,6 +147,12 @@ void::game_board::board_reset()
     } 
 }
 
+/**
+ * @brief Set the board for p1 and p2, take data from p1 and p2 and modify the board accordingly
+ * 
+ * @param p1 Player 1 player object
+ * @param p2 Player 2 player object
+ */
 void game_board::set_board( player& p1,  player& p2)
 {
     //Set default g_board values, without pawns
@@ -145,12 +160,15 @@ void game_board::set_board( player& p1,  player& p2)
 
 
     // Position player pawns
+    //Get player 1 positions of pawns and king
     std::map<int, piece> player1_pawn_pos = p1.pawn_get_pos();
     piece player1_king_pos = p1.king_get_pos();
     
+    //Get Player 2 positions of Pawns and king
     std::map<int, piece> player2_pawn_pos = p2.pawn_get_pos();
     piece player2_king_pos = p2.king_get_pos();
 
+    //Map the piece pair <int, int> to i and j of g_board respectievely
     for ( auto& p_info : player1_pawn_pos)
     {
         std::pair<int,int> temp = p_info.second.getposition();
@@ -190,6 +208,8 @@ void game_board::set_board( player& p1,  player& p2)
         g_board[k_temp.first][k_temp.second].piece_no = 9;
         g_board[k_temp.first][k_temp.second].color = 'r';
     }
+
+    //Do the same for player 2
     for ( auto& p_info : player2_pawn_pos)
     {
         std::pair<int,int> temp = p_info.second.getposition();
@@ -231,42 +251,11 @@ void game_board::set_board( player& p1,  player& p2)
             g_board[k_temp.first][k_temp.second].color = 'g';
         }
     
+    //Print the g_board
     for(int i = 0; i < getheight(); i++)
     {
         for(int j = 0; j < getwidth(); j++)
         {
-            // if((j == 0 || j == 5 || j == 10 || j == 15)&&(i == 0 || i == 5))
-            // {
-            //     print_box(check_pt_box);
-            // }
-            // else if((j == 0 || j == 5 || j == 10 || j == 15)&&(i == 1 || i == 2 || i == 3 || i == 4))
-            // {
-            //     print_box(empty_box);
-            // }
-            // else if((i == 0 ) && (j == 1 || j == 2 || j == 3 || j == 4 || j == 11 || j == 12 || j == 13 || j == 14) )
-            // {
-            //     print_box(empty_box);
-            // }
-            // else if((i == 5) && (j == 6 || j == 7 || j == 8 || j == 9))
-            // {
-            //     print_box(empty_box);
-            // }
-            // else if((i == 1 || i == 2 || i == 3 || i == 4) && (j == 2 || j == 3))
-            // {
-            //     //player 1 house
-            //     print_box(empty_space);
-                
-            // }
-            // else if((i == 1 || i == 2 || i == 3 || i == 4) && (j == 13 || j == 14))
-            // {
-            //     //Player 2 house
-            //     print_box(empty_space);
-            // }
-            // else
-            // {
-            //     print_box(empty_space);
-            // }
-
 
             if(g_board[i][j] == king_b || g_board[i][j] == king_c || g_board[i][j] == pawn_b || g_board[i][j] == pawn_c)
             {
@@ -288,6 +277,11 @@ void game_board::set_board( player& p1,  player& p2)
     }
 }
 
+/**
+ * @brief Print a simple box, no coloring
+ * 
+ * @param box box object
+ */
 void game_board::print_box(const box& box)
 {
     for(char ch: box.box_content)
@@ -297,6 +291,12 @@ void game_board::print_box(const box& box)
     }
 }
 
+
+/**
+ * @brief Print a check point box, there are 2 checkpoint boxes, player 1 and player 2
+ * 
+ * @param box box object
+ */
 void game_board::print_check_point_box(const box& box)
 {
     for(char ch: box.box_content)
@@ -326,6 +326,11 @@ void game_board::print_check_point_box(const box& box)
 
 }
 
+/**
+ * @brief Print a player box, its content are red for p1 and green for p2
+ * 
+ * @param box box object
+ */
 void game_board::print_player_box(const box& box)
 {
     for(char ch: box.box_content)
@@ -359,6 +364,13 @@ void game_board::print_player_box(const box& box)
     }
 }
 
+/**
+ * @brief operator== overload implementation, to test equality of box object
+ * 
+ * @param other other box object
+ * @return true if 2 boxes are equal
+ * @return false if 2 bxes are not equal
+ */
 bool box::operator==(box const& other)
 {
     if(box_content == other.box_content)
@@ -369,7 +381,10 @@ bool box::operator==(box const& other)
     return false;
 }
 
-// Constructor definition
+/**
+ * @brief Cowry throw method, random number is selected from a predefined enums of cowries outcomes
+ * 
+ */
 void cowries::cowry_throw()
 {
     std::random_device rd;
@@ -381,7 +396,11 @@ void cowries::cowry_throw()
 
 }
 
-// Function to calculate the count based on cowry position
+/**
+ * @brief Function to calculate the count based on cowry position
+ * 
+ * @return int the cowry score based on cowry positions
+ */
 int cowries::getCount() const {
     switch (position) {
         case ALL_FRONT_FACING:

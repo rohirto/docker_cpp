@@ -26,6 +26,10 @@
 #define SAFE_BOX_CHAR   'X'
 
 //Cowry handling
+/**
+ * @brief Enum of possible valid outcomes of cowries throw in daadu game
+ * 
+ */
 enum cowry_position {
     NONE_FRONT_FACING,
     ONE_FRONT_FACING,
@@ -35,6 +39,10 @@ enum cowry_position {
     ALL_FRONT_FACING
 };
 
+/**
+ * @brief Cowries class 
+ * 
+ */
 class cowries {
 public:
     // Constructor
@@ -49,7 +57,10 @@ private:
 
 
 
-
+/**
+ * @brief Box class which is used to print on game board
+ * 
+ */
 class box{
 public:
     char color;
@@ -60,6 +71,10 @@ public:
     bool operator==(box const& other);
 };
 
+/**
+ * @brief Game board
+ * 
+ */
 class game_board: virtual public screen, public menu, public box{
     
     box empty_b;

@@ -14,6 +14,12 @@
 #include "player.h"
 #include <limits>
 
+/**
+ * @brief toggle turns between p1 and p2
+ * 
+ * @param p1  Player 1
+ * @param p2  Player 2
+ */
 void toggle_turns(player& p1, player& p2)
 {
     if(p1.get_turn())
@@ -28,6 +34,13 @@ void toggle_turns(player& p1, player& p2)
     }
 }
 
+/**
+ * @brief check if all the pieces of player p has reached the check point or not
+ * 
+ * @param p player
+ * @return true all pieces of player has reached the checkpoint
+ * @return false not all pieces have reached the checkpoint
+ */
 bool player_check(player& p)
 {
     std::map<int, piece> pos = p.pawn_get_pos();
@@ -50,6 +63,14 @@ bool player_check(player& p)
 
 }
 
+/**
+ * @brief check if the game is won or not
+ * 
+ * @param p1 player 1 
+ * @param p2 player 2
+ * @return true if the player winds the game
+ * @return false if the game is still not won
+ */
 bool check_win(player& p1, player& p2)
 {
     
@@ -68,49 +89,68 @@ bool check_win(player& p1, player& p2)
     return false;
 }
 
+/**
+ * @brief Handle the turn of player p
+ * 
+ * @param window polymorphic object which is used to and display menu options
+ * @param p  player who's turn is currently handled
+ * @param other other player
+ * @param c cowry object
+ * @param gb gameboard oject which is used to set the board
+ */
 void handle_turn(screen *window, player &p, player &other, cowries& c, game_board& gb)
 {
-    char ch = window->display_cowry_menu(p.getname());
+    char ch = window->display_cowry_menu(p.getname()); //Get the cowry throw confirmation from player
     if (ch == 'f')
     {
-
+        //Got the confirmation
         c.cowry_throw();
         int score = c.getCount();
 
-        window->display_yellow("You got: ");
+        window->display_yellow("You got: "); //Display cowries score to player
         window->display_blue(score);
         std::cout << std::endl;
 
-        // Add 3sec delay
-        usleep(2 * 1000000); // sleeps for 3 second
+        // Add delay
+        usleep(2 * 1000000); // sleeps for 2 second
 
         switch (score)
         {
         case 1:
-            ch = window->display_daa_menu();
-            while (ch != 'k' && ch != 'p' && ch != 'c')
+            if (p.is_daa_remaining())
             {
-                ch = window->get_char();
-            }
+                ch = window->display_daa_menu();
+                while (ch != 'k' && ch != 'p' && ch != 'c')
+                {
+                    ch = window->get_char();
+                }
 
-            if (ch == 'k' || ch == 'p')
-            {
-                // Player opted for daa
-                if (p.daa_check(ch))
+                if (ch == 'k' || ch == 'p')
                 {
-                    // remove a pawn
+                    // Player opted for daa
+                    if (p.daa_check(ch))
+                    {
+                        // remove a pawn
+                    }
+                    else
+                    {
+                        // daa already done, account as one
+                        p.move_piece(1, other);
+                    }
                 }
-                else
+                else if (ch == 'c')
                 {
-                    // daa already done, account as one
                     p.move_piece(1, other);
+                    toggle_turns(p, other);
                 }
             }
-            else if (ch == 'c')
+            else //daa done, treat this as 1
             {
                 p.move_piece(1, other);
                 toggle_turns(p, other);
+
             }
+
             break;
         case 2:
             if (p.check_daa_initiated())
@@ -156,6 +196,12 @@ void handle_turn(screen *window, player &p, player &other, cowries& c, game_boar
     }
 }
 
+
+/**
+ * @brief main function
+ * 
+ * @return int 
+ */
 int main()
 {
     screen *window;  //Polymorphic class
@@ -165,14 +211,14 @@ int main()
 
     window = &m;
 
-    char choice = window->display_menu();
+    int choice = window->display_menu();
 
-    if (choice == '1')
+    if (choice == 1)
     {
 
         // Start the game
         window->clear();
-        player p1(1), p2(2);
+        player p1(1), p2(2);  //Initialize player 1 and player 2
 
         // Start the game
         window->clear();
@@ -182,33 +228,39 @@ int main()
 
         while (1)
         {
-            // Player 1 turn
-            if (p1.get_turn())
+            if (p1.get_turn()) // Player 1 turn
             {
                 handle_turn(window,p1,p2,c,gb);
             }
-            else if(p2.get_turn())
+            else if(p2.get_turn()) // Player 2 win
             {
                 handle_turn(window,p2,p1,c,gb);
             }
 
+            //After handling turns, update the board to reflect the changes made during turns
             window->clear();
             gb.set_board(p1, p2);
 
             //check win
             if(check_win(p1,p2))
             {
-                break;
+                break;  //If win break the while loop
             }
             
 
 
         }
     }
-    else if (choice == '2')
+    else if (choice == 3)
     {
         // Exit the game
         window->display_red("Exiting the game!\n");
+    }
+    else if(choice == 2)
+    {
+        //Display Rules to play
+        window->clear();
+        window->display_rules();
     }
 
     return 0;

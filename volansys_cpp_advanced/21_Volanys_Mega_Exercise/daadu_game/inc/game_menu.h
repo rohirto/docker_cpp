@@ -13,15 +13,22 @@
 #define _GAME_MENU_H_
 
 #include <ncurses.h>
+#include <iostream>
+#include <vector>
 #include "screen.h"
 
-
+/**
+ * @brief menu object, to display various types of menu to user
+ * 
+ */
 class menu: virtual public screen{
 
 public:
-    char display_menu();
+    int display_menu();
     char display_cowry_menu(std::string_view name);
     char display_daa_menu();
+    int display_possible_moves(std::vector<int>& moves);
+    char display_rules();
 
 
 };

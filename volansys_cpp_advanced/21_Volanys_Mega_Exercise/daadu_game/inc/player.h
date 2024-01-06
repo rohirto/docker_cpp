@@ -133,7 +133,10 @@ const std::pair<int,int> player2_map_24(2,5);
 const std::pair<int,int> player2_map_25(1,5);
 const std::pair<int,int> player2_map_26(0,5); //Cehckpoint
 
-
+/**
+ * @brief piece class
+ * 
+ */
 class piece{
     std::pair<int,int> position;
     
@@ -162,7 +165,10 @@ public:
 
 };
 
-
+/**
+ * @brief Player class
+ * 
+ */
 class player: virtual public piece, public menu{
     std::string name;
     int player_no; //1 or 2
@@ -192,13 +198,15 @@ public:
     void move_piece( int steps, player& other);
     bool check_daa_initiated(){return daa_initiated;}
     void set_daa_initiated(bool val){daa_initiated = val;}
-    void set_piece_back(piece& p, int no, int player_no);
+    void set_piece_back(piece& p, int no);
     bool check_piece_safe(piece& p, const player& other, int& pos);
-    bool if_check_pt_reached(piece& p);
+    bool if_check_pt_reached(std::pair<int,int> new_pos);
     bool get_kill(){return has_killed;}
+    bool is_daa_remaining();
 
 private:
     bool helper_move_piece(piece& p,int steps,int piece_no, player& other);
+    void check_possible_moves(std::vector<int>& moves_lst, std::pair<const int, piece>& p,int steps);
 
     
 
