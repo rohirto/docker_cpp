@@ -14,6 +14,11 @@
 #include <limits>
 #include "screen.h"
 
+/**
+ * @brief get valid char from user
+ * 
+ * @return char c from user input
+ */
 char screen::get_char()
 {
     char ch;
@@ -32,6 +37,11 @@ char screen::get_char()
     return ch;
 }
 
+/**
+ * @brief get a valid int from user
+ * 
+ * @return int c from user input
+ */
 int screen::get_int()
 {
     int ch;
@@ -49,6 +59,11 @@ int screen::get_int()
     return ch;
 }
 
+/**
+ * @brief get a valid string from user
+ * 
+ * @return std::string object from user input
+ */
 std::string screen::get_string()
 {
     std::string s;
