@@ -178,6 +178,29 @@
             "group": "build",
             "detail": "with -Wall, -g and -o flags."
 
+        },
+        {
+            "label": "Build C++ Program Threads",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-Wall",
+                "-fdiagnostics-color=always",
+                "-fconcepts",
+                "-pthread",
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/../build/${fileBasenameNoExtension}.out"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "with -Wall, -g and -o flags."
         }
     ],
     "version": "2.0.0"

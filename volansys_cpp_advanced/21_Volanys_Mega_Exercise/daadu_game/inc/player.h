@@ -207,6 +207,7 @@ public:
 private:
     bool helper_move_piece(piece& p,int steps,int piece_no, player& other);
     void check_possible_moves(std::vector<int>& moves_lst, std::pair<const int, piece>& p,int steps);
+    void check_overlapping_pieces(std::vector<std::string>& s, piece& p);
 
     
 

@@ -1,29 +1,24 @@
 #include <iostream>
-#include <vector>
+#include <thread>
+#include <chrono>
+
+void printMessage() {
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::cout << "Printed while waiting for input on std::cin!" << std::endl;
+}
 
 int main() {
-    // Define a 3x3 grid represented by a 3D vector of characters
-    std::vector<std::vector<std::vector<char>>> grid(3, std::vector<std::vector<char>>(3, std::vector<char>(1, ' ')));
+    // Start a separate thread to print a message
+    std::thread printThread(printMessage);
 
-    // Create a vector<char> to copy into the grid
-    std::vector<char> charVector = {'A', 'B', 'C'};
+    std::cout << "Enter something: ";
+    
+    // Main thread waits for user input
+    std::string userInput;
+    std::cin >> userInput;
 
-    // Specify the location (i, j) where you want to copy the vector
-    int i = 1; // Row index
-    int j = 2; // Column index
-
-    // Copy the charVector into the specified location
-    grid[i][j] = charVector;
-
-    // Print the updated grid
-    for (const auto& row : grid) {
-        for (const auto& col : row) {
-            for (char ch : col) {
-                std::cout << ch << " ";
-            }
-        }
-        std::cout << std::endl;
-    }
+    // Join the print thread before exiting
+    printThread.join();
 
     return 0;
 }

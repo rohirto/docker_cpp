@@ -12,6 +12,7 @@
 #include "player.h"
 #include <algorithm>
 #include <limits>
+#include <sstream>
 
 /**
  * @brief Method to set name of player
@@ -636,6 +637,31 @@ void player::check_possible_moves(std::vector<int> &moves_lst, std::pair<const i
     }
 }
 
+void player::check_overlapping_pieces(std::vector<std::string>& s,piece& p)
+{
+    if (p.daa_check() && !p.checkpt_check())
+    {
+        for (std::pair<const int, piece> &otherp : pawn_pos)
+        {
+            if (otherp.second != p)
+            {
+                if (otherp.second.getposition() == p.getposition())
+                {
+                    // Overlap
+                    std::ostringstream oss;
+
+                    oss << " Piece " << otherp.first << "Overlaps \n";
+
+                    std::string temp = oss.str();
+                    s.push_back(temp);
+                }
+            }
+        }
+        
+    }
+
+}
+
 /**
  * @brief Method to move the piece as per steps
  *
@@ -649,6 +675,7 @@ void player::move_piece(int steps, player &other)
     {
         // check possible moves
         std::vector<int> possible_moves;
+        std::vector<std::string> overlapping_pieces;
         for (std::pair<const int, piece> &p : pawn_pos)
         {
             check_possible_moves(possible_moves, p, steps);
@@ -659,6 +686,14 @@ void player::move_piece(int steps, player &other)
             check_possible_moves(possible_moves, temp, steps);
         }
         int piece_no = display_possible_moves(possible_moves);
+
+        //Display overlapss
+        if(piece_no != 9)
+            check_overlapping_pieces(overlapping_pieces,pawn_pos[piece_no]);
+        else
+            check_overlapping_pieces(overlapping_pieces, king_pos);
+        
+        display_overlaps(overlapping_pieces);
 
         if (piece_no != 9 && piece_no != 0) // not king and there are possible moves
         {

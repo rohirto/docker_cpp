@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "game_menu.h"
+#include <unistd.h>
 
 /**
  * @brief Display the main screen menu, game name and option plus rules to play
@@ -208,6 +209,24 @@ int menu::display_possible_moves(std::vector<int>& moves)
 
     return ch;
 
+}
+
+void menu::display_overlaps(std::vector<std::string>& s)
+{
+    if(s.empty())
+    {
+        return;
+    }
+    while(!s.empty())
+    {
+        std::string temp = s.back();
+        s.pop_back();
+        std::cout << std::endl;
+        display_yellow(temp);
+    }
+
+    //Sleep for 3 secs
+    usleep(2 * 1000000); // sleeps for 2 second
 }
 
 

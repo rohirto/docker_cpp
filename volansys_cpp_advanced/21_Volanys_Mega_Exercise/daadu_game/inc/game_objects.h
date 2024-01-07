@@ -97,7 +97,9 @@ class game_board: virtual public screen, public menu, public box{
 
 public:
     game_board();
-    void set_board( player& p1,  player& p2);
+    void print_board();
+    void fill_g_board(std::map<int, piece>& player_pawn_pos, piece& king_pos, char col);
+    void set_board_interactive(player& p1, player& p2);
     
 
 private:

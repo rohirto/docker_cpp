@@ -3,7 +3,7 @@ INC_DIR = inc
 BUILD_DIR = build
 
 CXX = g++
-CXXFLAGS = -Wall -I$(INC_DIR) -g -lncurses
+CXXFLAGS = -Wall -I$(INC_DIR) -g -lncurses -pthread
 
 # Get a list of all .cpp files in the src directory
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)

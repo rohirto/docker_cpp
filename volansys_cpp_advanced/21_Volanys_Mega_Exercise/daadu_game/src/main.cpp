@@ -222,7 +222,7 @@ int main()
 
         // Start the game
         window->clear();
-        gb.set_board(p1, p2);
+        gb.set_board_interactive(p1, p2);
 
         cowries c;
 
@@ -239,7 +239,7 @@ int main()
 
             //After handling turns, update the board to reflect the changes made during turns
             window->clear();
-            gb.set_board(p1, p2);
+            gb.set_board_interactive(p1, p2);
 
             //check win
             if(check_win(p1,p2))

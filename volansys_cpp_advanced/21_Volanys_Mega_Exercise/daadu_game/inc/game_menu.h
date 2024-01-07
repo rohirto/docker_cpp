@@ -29,6 +29,7 @@ public:
     char display_daa_menu();
     int display_possible_moves(std::vector<int>& moves);
     char display_rules();
+    void display_overlaps(std::vector<std::string>& s);
 
 
 };
