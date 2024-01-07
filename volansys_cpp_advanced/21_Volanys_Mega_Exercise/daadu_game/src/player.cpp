@@ -15,7 +15,7 @@
 
 /**
  * @brief Method to set name of player
- * 
+ *
  */
 void player::setname()
 {
@@ -26,8 +26,8 @@ void player::setname()
 
 /**
  * @brief Method to get name of the player object
- * 
- * @return std::string 
+ *
+ * @return std::string
  */
 std::string player::getname()
 {
@@ -36,8 +36,8 @@ std::string player::getname()
 
 /**
  * @brief get the pawn_pos object, it is a map of 8 piece object which are treated as pawns
- * 
- * @return std::map<int, piece> 
+ *
+ * @return std::map<int, piece>
  */
 std::map<int, piece> player::pawn_get_pos()
 {
@@ -46,8 +46,8 @@ std::map<int, piece> player::pawn_get_pos()
 
 /**
  * @brief get the king object of the player, it is a piece object treated as king
- * 
- * @return piece 
+ *
+ * @return piece
  */
 piece player::king_get_pos()
 {
@@ -56,30 +56,29 @@ piece player::king_get_pos()
 
 /**
  * @brief Is daa remaining for the player
- * 
+ *
  * @return true - yes daa is remaining
  * @return false - daa is completed
  */
 bool player::is_daa_remaining()
 {
-    for(std::pair<const int,piece>& p : pawn_pos)
+    for (std::pair<const int, piece> &p : pawn_pos)
     {
-        if(p.second.daa_check() == false)
+        if (p.second.daa_check() == false)
         {
             return true;
         }
     }
-    if(king_pos.daa_check() == false)
+    if (king_pos.daa_check() == false)
     {
         return true;
     }
     return false;
 }
 
-
 /**
  * @brief method to set a peice back to the house, it happens when other player kills your piece
- * 
+ *
  * @param p piece which is killed by the other player
  * @param no 1-8 for pawns, 9 for king
  */
@@ -149,7 +148,7 @@ void player::set_piece_back(piece &p, int no)
 
 /**
  * @brief check if piece p is safe or not
- * 
+ *
  * @param p piece whose safety is being checked
  * @param other other player from whom the safety of peice p is being assesed
  * @param piece_no (1-8 is for pawns and 9 for king)
@@ -176,9 +175,9 @@ bool player::check_piece_safe(piece &p, const player &other, int &piece_no)
 
     /**
      * @brief Multiple box occupancy check Any of loop along with a lambda fucntion
-     * @paragraph If any of the other player's pawns, has the same position as piece p (p itself is a piece of other player), if 
+     * @paragraph If any of the other player's pawns, has the same position as piece p (p itself is a piece of other player), if
      *            yes, then the piece is safe, else it can be eliminated
-     * 
+     *
      */
     bool multiple_chck_val = std::any_of(other.pawn_pos.begin(), other.pawn_pos.end(), [&p, &piece_no](std::pair<int, piece> op)
                                          { if(piece_no != op.first){ return op.second.getposition() == p.getposition(); }return false; });
@@ -189,12 +188,12 @@ bool player::check_piece_safe(piece &p, const player &other, int &piece_no)
     }
     else
     {
-        if( p != other.king_pos) //pawn overloapping with king
+        if (p != other.king_pos) // pawn overloapping with king
         {
             piece t = other.king_pos;
-            if(t.getposition() == p.getposition())
+            if (t.getposition() == p.getposition())
             {
-                //overloapping with king
+                // overloapping with king
                 return true;
             }
         }
@@ -202,10 +201,9 @@ bool player::check_piece_safe(piece &p, const player &other, int &piece_no)
     }
 }
 
-
 /**
  * @brief see if the new position has reached the check point or not
- * 
+ *
  * @param new_pos valid new position which is a result of cowry throw
  * @return true new position has reached the check point, piece can be removed from the board
  * @return false piece has yet not reached the checkpoint, still on board
@@ -234,7 +232,7 @@ bool player::if_check_pt_reached(std::pair<int, int> new_pos)
 
 /**
  * @brief Construct a new player::player object
- * 
+ *
  * @param no the player number(Either can be 1 or 2)
  */
 player::player(int no)
@@ -243,7 +241,7 @@ player::player(int no)
     display_yellow(no);
     display_yellow(" name: ");
     name = get_string();
-    //display_yellow("Set player number (1 or 2): ");
+    // display_yellow("Set player number (1 or 2): ");
     player_no = no;
 
     turn = false;
@@ -334,8 +332,8 @@ player::player(int no)
 }
 
 /**
- * @brief set the turn of the player 
- * 
+ * @brief set the turn of the player
+ *
  * @param val if true, the set the turn of player, else give turn to other
  */
 void player::set_turn(bool val)
@@ -343,10 +341,9 @@ void player::set_turn(bool val)
     turn = val;
 }
 
-
 /**
  * @brief check the daa for pawns and king, if daa is remaining, then take a piece out and update daa
- * 
+ *
  * @param c character which determiines if pawn or king
  * @return true if a piece is taken out
  * @return false if all peices are already out
@@ -392,7 +389,7 @@ bool player::daa_check(char c) // if c == p -> pawn, if c== k -> king
 
 /**
  * @brief Helper method to move a piece on the board, according to the rules of the game
- * 
+ *
  * @param p piece to be moved
  * @param steps steps by which the piece is to be moved
  * @param piece_no number of piece (1-8 pawns and 9 is king)
@@ -400,29 +397,29 @@ bool player::daa_check(char c) // if c == p -> pawn, if c== k -> king
  * @return true if the move was successful and the caller's while loop needs to be broken
  * @return false if move was invalid and caller's while loop needs to be continued till valid move is made
  */
-bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
+bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
 {
     int temp = 0;
     int temp_step_no = 0;
     if (p.daa_check())
     {
         temp_step_no = p.step_no + steps;
-        if (temp_step_no <= 26)
+        if (temp_step_no < 26)
         {
             std::pair<int, int> new_pos = player_map[temp_step_no];
             /**
              * @brief any_of loop, along with lambda fucntion
              * @paragraph If any of other player's pawn, has the same position as new position of piece p or other player's king has
-             *            same position as new position of piece p. 
+             *            same position as new position of piece p.
              *            This is a condition to test the clash of pieces
              */
-            if (std::any_of(other.pawn_pos.begin(), other.pawn_pos.end(), [&piece_no, &temp,&new_pos](std::pair<int, piece> op)    //anyof loop to see if other pawn piece clash with our piece
+            if (std::any_of(other.pawn_pos.begin(), other.pawn_pos.end(), [&piece_no, &temp, &new_pos](std::pair<int, piece> op) // anyof loop to see if other pawn piece clash with our piece
                             { if( op.second.getposition() == new_pos){temp = op.first; return true;} return false; }) ||
-                [&other, &temp,&new_pos]()
-                {if( other.king_pos.getposition() == new_pos){temp = 9; return true;} return false; }() //IIFE for other's kingpos clash
-                )
+                [&other, &temp, &new_pos]()
+                {if( other.king_pos.getposition() == new_pos){temp = 9; return true;} return false; }() // IIFE for other's kingpos clash
+            )
             {
-                if (temp != 9) //If not king
+                if (temp != 9) // If not king
                 {
                     // Check safe condition
                     if (!check_piece_safe(other.pawn_pos[temp], other, temp)) // Check if the pawn of the other player is safe or not
@@ -433,15 +430,15 @@ bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
                         other.pawn_pos[temp].step_no = 0;
                         other.pawn_pos[temp].set_daa(false);
                         set_piece_back(other.pawn_pos[temp], temp);
-                        has_killed = true;  //Player has killed other's pawn
+                        has_killed = true; // Player has killed other's pawn
                     }
                 }
-                else //If a king
+                else // If a king
                 {
                     // Check safe condition
                     if (!check_piece_safe(other.king_pos, other, temp)) // Check if the pawn of the other player is safe or not
                     {
-                        if(p != king_pos)  //Pawn killed king
+                        if (p != king_pos) // Pawn killed king
                         {
                             // Not safe
                             // Clash has occured
@@ -450,40 +447,47 @@ bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
                             other.king_pos.set_daa(false);
                             set_piece_back(other.king_pos, 9);
 
-                            has_killed = true;  //Player has killed other's pieces
+                            has_killed = true; // Player has killed other's pieces
                         }
                         else
                         {
-                            //King has killed king, send all pieces to home
+                            // King has killed king, send all pieces to home
                             other.king_pos.step_no = 0;
                             other.king_pos.set_daa(false);
                             other.set_daa_initiated(false);
-                            set_piece_back(other.king_pos,9);
-                            has_killed = true;  //Player has killed other's pawn
-                            for(auto& p: other.pawn_pos)
+                            set_piece_back(other.king_pos, 9);
+                            has_killed = true; // Player has killed other's pawn
+                            for (auto &p : other.pawn_pos)
                             {
-                                if(!p.second.checkpt_check())
+                                if (!p.second.checkpt_check())
                                 {
-                                     p.second.step_no = 0;
+                                    p.second.step_no = 0;
                                     p.second.set_daa(false);
                                     set_piece_back(p.second, p.first);
-                                    
                                 }
-                               
                             }
-
                         }
                     }
-
                 }
 
-                //Update the positions
+                // Update the positions
                 p.step_no = temp_step_no;
                 p.setpostion(player_map[p.step_no]);
             }
-            else if (if_check_pt_reached(new_pos)) // Check if reached check point
+            else
             {
-                if (has_killed)  //Can reach check point only if player has eliminated atleast 1 of other player's pieces
+                // No clash but need to update position
+                p.step_no = temp_step_no;
+                p.setpostion(player_map[p.step_no]);
+            }
+        }
+        else if (temp_step_no == 26)  //Check point validation
+        {
+            std::pair<int, int> new_pos = player_map[temp_step_no];
+            // Reached check point, check the check point conditions
+            if (if_check_pt_reached(new_pos)) // Check if reached check point
+            {
+                if (has_killed) // Can reach check point only if player has eliminated atleast 1 of other player's pieces
                 {
                     p.step_no = temp_step_no;
                     // Need to have killed to reach checkpoint
@@ -556,12 +560,12 @@ bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
                         break;
                     }
                 }
-                else  //Not killed any of the other player's pieces
+                else // Not killed any of the other player's pieces
                 {
                     display_yellow("Need to take out atleast one piece of other player to reach checkpoint\n");
                     display_yellow("Move any other piece? (y or n)");
                     char chh = get_char();
-                    if(chh == 'y')
+                    if (chh == 'y')
                     {
                         return false;
                     }
@@ -570,12 +574,6 @@ bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
                         return true;
                     }
                 }
-            }
-            else
-            {
-                //No clash but need to update position
-                p.step_no = temp_step_no;
-                p.setpostion(player_map[p.step_no]);
             }
         }
         else
@@ -618,10 +616,9 @@ bool player::helper_move_piece(piece&p, int steps,int piece_no, player &other)
     }
 }
 
-
 /**
  * @brief Method to check all possible moves for piece p object
- * 
+ *
  * @param moves_lst a vector of int containing the piece no which can be moved
  * @param p piece object in map form, p.first is the piece no (1-8 for pawns, 9 for king)
  * @param steps no of steps needed to be taken
@@ -641,7 +638,7 @@ void player::check_possible_moves(std::vector<int> &moves_lst, std::pair<const i
 
 /**
  * @brief Method to move the piece as per steps
- * 
+ *
  * @param steps steps by which the piece needs to be moved
  * @param other other player to check clashes
  */
@@ -650,40 +647,37 @@ void player::move_piece(int steps, player &other)
 
     while (1)
     {
-        //check possible moves
+        // check possible moves
         std::vector<int> possible_moves;
-        for(std::pair<const int, piece>&p : pawn_pos)
+        for (std::pair<const int, piece> &p : pawn_pos)
         {
-            check_possible_moves(possible_moves,p,steps);
-
+            check_possible_moves(possible_moves, p, steps);
         }
-        if(king_pos.daa_check() && !king_pos.checkpt_check())
+        if (king_pos.daa_check() && !king_pos.checkpt_check())
         {
-            std::pair<const int, piece> temp = std::make_pair(9,king_pos);
-            check_possible_moves(possible_moves,temp,steps);
+            std::pair<const int, piece> temp = std::make_pair(9, king_pos);
+            check_possible_moves(possible_moves, temp, steps);
         }
         int piece_no = display_possible_moves(possible_moves);
 
-        if(piece_no != 9 && piece_no != 0) //not king and there are possible moves
+        if (piece_no != 9 && piece_no != 0) // not king and there are possible moves
         {
-            if(helper_move_piece(pawn_pos[piece_no],steps, piece_no, other))
+            if (helper_move_piece(pawn_pos[piece_no], steps, piece_no, other))
                 break;
             else
                 continue;
         }
-        else if( piece_no == 0)
+        else if (piece_no == 0)
         {
-            //NO possible moves left
+            // NO possible moves left
             break;
         }
         else
         {
-            if(helper_move_piece(king_pos,steps, piece_no, other))
+            if (helper_move_piece(king_pos, steps, piece_no, other))
                 break;
             else
                 continue;
-
         }
-
     }
 }
