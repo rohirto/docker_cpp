@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <limits>
 #include <sstream>
+#include <set>
 
 /**
  * @brief Method to set name of player
@@ -616,6 +617,14 @@ bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
         return false;
     }
 }
+bool isNumberInSet(int number, const std::set<int>& cp) {
+    // Use std::find to check if the number is present in the vector
+    auto it = std::find(cp.begin(), cp.end(), number);
+
+    // Check if the iterator points to the end of the vector
+    // indicating that the number was not found
+    return it != cp.end();
+}
 
 /**
  * @brief Method to check all possible moves for piece p object
@@ -624,8 +633,9 @@ bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
  * @param p piece object in map form, p.first is the piece no (1-8 for pawns, 9 for king)
  * @param steps no of steps needed to be taken
  */
-void player::check_possible_moves(std::vector<int> &moves_lst, std::pair<const int, piece> &p, int steps)
+void player::check_possible_moves(std::vector<int> &moves_lst,std::set<int>& cp, std::pair<const int, piece> &p, int steps)
 {
+    std::vector<std::string> overlapping_pieces;
     if (p.second.daa_check() && !p.second.checkpt_check()) // Daa done and not reached checkpoint
     {
         int temp = p.second.step_no + steps;
@@ -634,32 +644,73 @@ void player::check_possible_moves(std::vector<int> &moves_lst, std::pair<const i
             // Yes can move this peice
             moves_lst.push_back(p.first);
         }
+
+        //Check overlapping positions with self pawns
+        if(!isNumberInSet(p.first, cp))
+            check_overlapping_pieces(overlapping_pieces,cp, p);
     }
+
+   
 }
 
-void player::check_overlapping_pieces(std::vector<std::string>& s,piece& p)
+
+
+void player::check_overlapping_pieces(std::vector<std::string>& s,std::set<int>& cp,std::pair<const int, piece> &p)
 {
-    if (p.daa_check() && !p.checkpt_check())
+    std::set<int> pp;
+    if (!isNumberInSet(p.first, cp))
     {
+
         for (std::pair<const int, piece> &otherp : pawn_pos)
         {
-            if (otherp.second != p)
+
+            if (otherp.first != p.first)
             {
-                if (otherp.second.getposition() == p.getposition())
+                if (otherp.second.getposition() == p.second.getposition())
                 {
                     // Overlap
                     std::ostringstream oss;
 
-                    oss << " Piece " << otherp.first << "Overlaps \n";
+                    oss << p.first << " <--> " << otherp.first;
 
                     std::string temp = oss.str();
                     s.push_back(temp);
+
+                    //Add to print set
+                    pp.insert(p.first);
+                    pp.insert(otherp.first);
+                    // If not in checked pieces then push to checked pieces vector
+                    cp.insert(p.first); // Insert the overlapped piece in set
+                    cp.insert(otherp.first);
                 }
             }
         }
-        
     }
 
+    //Display overlaps
+    display_overlaps_set(pp, player_no);
+}
+
+
+void player::check_overlapping_enemy_pieces(player& other, std::set<int>& cp,std::pair<const int, piece> &p)
+{
+    if (!isNumberInSet(p.first, cp))
+    {
+        std::set<int> pp;
+        for (std::pair<const int, piece> &otherp : other.pawn_pos)
+        {
+            if (otherp.second.getposition() == p.second.getposition())
+            {
+                pp.insert(otherp.first);
+                cp.insert(p.first); // Insert the overlapped piece in set
+            }
+        }
+
+        //Display overlaps
+        display_overlaps_set(pp, other.player_no);
+    }
+
+    
 }
 
 /**
@@ -675,25 +726,24 @@ void player::move_piece(int steps, player &other)
     {
         // check possible moves
         std::vector<int> possible_moves;
-        std::vector<std::string> overlapping_pieces;
+        std::set<int> checked_pieces; //It is a set of values which represents overlapping piece nos
+        std::set<int> checked_pieces_enemy;
         for (std::pair<const int, piece> &p : pawn_pos)
         {
-            check_possible_moves(possible_moves, p, steps);
+            check_possible_moves(possible_moves,checked_pieces, p, steps);
+            check_overlapping_enemy_pieces(other,checked_pieces_enemy, p);
         }
         if (king_pos.daa_check() && !king_pos.checkpt_check())
         {
             std::pair<const int, piece> temp = std::make_pair(9, king_pos);
-            check_possible_moves(possible_moves, temp, steps);
+            check_possible_moves(possible_moves,checked_pieces, temp, steps);
+            check_overlapping_enemy_pieces(other,checked_pieces_enemy, temp);
         }
+        checked_pieces.clear(); //Clear the set of checked pieces after the process is complete
+        checked_pieces_enemy.clear();
         int piece_no = display_possible_moves(possible_moves);
 
-        //Display overlapss
-        if(piece_no != 9)
-            check_overlapping_pieces(overlapping_pieces,pawn_pos[piece_no]);
-        else
-            check_overlapping_pieces(overlapping_pieces, king_pos);
         
-        display_overlaps(overlapping_pieces);
 
         if (piece_no != 9 && piece_no != 0) // not king and there are possible moves
         {

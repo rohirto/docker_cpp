@@ -217,16 +217,71 @@ void menu::display_overlaps(std::vector<std::string>& s)
     {
         return;
     }
-    while(!s.empty())
+    display_yellow("Overlapping Pieces: \n");
+    for(auto& i: s)
     {
-        std::string temp = s.back();
-        s.pop_back();
-        std::cout << std::endl;
-        display_yellow(temp);
+        display_yellow(i);
     }
+    std::cout << std::endl;
+
+    s.clear(); //Clear the set
 
     //Sleep for 3 secs
     usleep(2 * 1000000); // sleeps for 2 second
+}
+
+void menu::display_overlaps_set(std::set<int>& cp, int player_no)
+{
+    if(cp.empty())
+    {
+        return;
+    }
+    display_yellow("Overlapping Pieces: \n");
+    for(auto& i: cp)
+    {
+        if(player_no == 1)
+            display_red(i);
+        else
+            display_green(i);
+        display_yellow(" <--> ");
+    }
+    std::cout << std::endl;
+
+    cp.clear();
+
+    
+
+}
+
+void win_menu(int no)
+{
+    menu m;
+    if (no == 1)
+    {
+
+        m.display_yellow("██████╗ ██╗      █████╗ ██╗   ██╗███████╗██████╗      ██╗    ██╗    ██╗██╗███╗   ██╗███████╗");
+        std::cout << std::endl;
+        m.display_yellow("██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝██╔════╝██╔══██╗    ███║    ██║    ██║██║████╗  ██║██╔════╝");
+        std::cout << std::endl;
+        m.display_yellow("██████╔╝██║     ███████║ ╚████╔╝ █████╗  ██████╔╝    ╚██║    ██║ █╗ ██║██║██╔██╗ ██║███████╗");
+        std::cout << std::endl;
+        m.display_yellow("██╔═══╝ ██║     ██╔══██║  ╚██╔╝  ██╔══╝  ██╔══██╗     ██║    ██║███╗██║██║██║╚██╗██║╚════██║");
+        std::cout << std::endl;
+        m.display_yellow("██║     ███████╗██║  ██║   ██║   ███████╗██║  ██║     ██║    ╚███╔███╔╝██║██║ ╚████║███████║");
+        std::cout << std::endl;
+        m.display_yellow("╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝     ╚═╝     ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚══════╝");
+        std::cout << std::endl;
+    }
+    else
+    {
+
+        m.display_yellow("██████╗ ██╗      █████╗ ██╗   ██╗███████╗██████╗     ██████╗     ██╗    ██╗██╗███╗   ██╗███████╗");std::cout << std::endl;
+        m.display_yellow("██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝██╔════╝██╔══██╗    ╚════██╗    ██║    ██║██║████╗  ██║██╔════╝");std::cout << std::endl;
+        m.display_yellow("██████╔╝██║     ███████║ ╚████╔╝ █████╗  ██████╔╝     █████╔╝    ██║ █╗ ██║██║██╔██╗ ██║███████╗");std::cout << std::endl;
+        m.display_yellow("██╔═══╝ ██║     ██╔══██║  ╚██╔╝  ██╔══╝  ██╔══██╗    ██╔═══╝     ██║███╗██║██║██║╚██╗██║╚════██║");std::cout << std::endl;
+        m.display_yellow("██║     ███████╗██║  ██║   ██║   ███████╗██║  ██║    ███████╗    ╚███╔███╔╝██║██║ ╚████║███████║");std::cout << std::endl;
+        m.display_yellow("╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝    ╚══════╝     ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚══════╝");std::cout << std::endl;
+    }
 }
 
 

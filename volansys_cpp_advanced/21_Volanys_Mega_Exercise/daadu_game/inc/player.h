@@ -17,6 +17,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <set>
 #include <utility>
 #include "game_menu.h"
 
@@ -206,8 +207,9 @@ public:
 
 private:
     bool helper_move_piece(piece& p,int steps,int piece_no, player& other);
-    void check_possible_moves(std::vector<int>& moves_lst, std::pair<const int, piece>& p,int steps);
-    void check_overlapping_pieces(std::vector<std::string>& s, piece& p);
+    void check_possible_moves(std::vector<int>& moves_lst, std::set<int>& cp, std::pair<const int, piece>& p,int steps);
+    void check_overlapping_pieces(std::vector<std::string>& s, std::set<int>& cp,std::pair<const int, piece> &p);
+    void check_overlapping_enemy_pieces(player& other, std::set<int>& cp,std::pair<const int, piece> &p);
 
     
 

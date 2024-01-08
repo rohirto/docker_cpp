@@ -15,6 +15,7 @@
 #include <ncurses.h>
 #include <iostream>
 #include <vector>
+#include <set>
 #include "screen.h"
 
 /**
@@ -24,14 +25,17 @@
 class menu: virtual public screen{
 
 public:
-    int display_menu();
-    char display_cowry_menu(std::string_view name);
-    char display_daa_menu();
+    int display_menu() override;
+    char display_cowry_menu(std::string_view name)override;
+    char display_daa_menu()override;
     int display_possible_moves(std::vector<int>& moves);
-    char display_rules();
+    char display_rules()override;
     void display_overlaps(std::vector<std::string>& s);
+    void display_overlaps_set(std::set<int>& cp, int player_no);
 
 
 };
+
+void win_menu(int no);
 
 #endif

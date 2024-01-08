@@ -76,13 +76,17 @@ bool check_win(player& p1, player& p2)
     
     if(player_check(p1))
     {
-        std::cout << p1.getname() << " Wins";
+        std::cout << std::endl;
+        win_menu(1);
+        //std::cout << p1.getname() << " Wins";
         return true;
 
     }
     else if (player_check(p2))
     {
-        std::cout << p2.getname() << "Wins";
+        std::cout << std::endl;
+        win_menu(2);
+        //std::cout << p2.getname() << " Wins";
         return true;
     }
 
