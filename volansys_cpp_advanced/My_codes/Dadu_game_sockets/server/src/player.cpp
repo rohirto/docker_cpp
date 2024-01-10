@@ -14,17 +14,20 @@
 #include <limits>
 #include <sstream>
 #include <set>
+#include <cstring> // For C string functions
 
 /**
  * @brief Method to set name of player
  *
  */
-void player::setname()
+void player::setname(const char* s)
 {
     //Need to get from sockets
     // name = get_string();
 
     // std::cout << "Player name set to: " << name << std::endl;
+    std::string temp(s,strlen(s));
+    name = temp;
 }
 
 /**
@@ -773,3 +776,28 @@ void player::move_piece(int steps, player &other)
         }
     }
 }
+
+// player& player::operator=(player&& other) 
+// {
+//     this->daa_initiated = other.daa_initiated;
+//     this->has_killed = other.has_killed;
+//     piece::operator=(std::move(other));
+    
+//     this->name = other.name;
+    
+//     this->player_map = other.player_map;
+//     this->player_no = other.player_no;
+//     this->step_no = other.step_no;
+//     this->turn = other.turn;
+
+// }
+// piece& piece::operator=(piece&& other) 
+// {
+//     this->is_check_point_reached = other.is_check_point_reached;
+//     this->is_daa_done = other.is_daa_done;
+//     this->is_king  = other.is_king;
+//     this->position = other.position;
+
+//     return *this;
+
+// }

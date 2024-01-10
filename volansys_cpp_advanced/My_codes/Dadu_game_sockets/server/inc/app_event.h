@@ -13,8 +13,10 @@
 
 #include <thread>
 #include "player.h"
+#include "server_sockets.h"
 
-
+#define ONLINE  1
+#define OFFLINE 0
 
 
 /**
@@ -29,30 +31,35 @@ typedef enum
 } EventType;
 
 // Event callback function signatures
-typedef void (*ReadEventHandler)(player*);
-typedef void (*WriteEventHandler)(player*);
-typedef void (*ExceptionEventHandler)(player*);
+
+typedef void (*ReadEventHandler_cpp)(client&);
+typedef void (*WriteEventHandler_cpp)(client&);
+typedef void (*ExceptionEventHandler_cpp)(client&);
 
 // Structure to hold event handlers
+
+
 /**
  * @brief struct where callback handlers are defined
  * 
  */
 typedef struct 
 {
-    ReadEventHandler onRead;
-    WriteEventHandler onWrite;
-    ExceptionEventHandler onException;
-} EventHandler;
+    ReadEventHandler_cpp onRead;
+    WriteEventHandler_cpp onWrite;
+    ExceptionEventHandler_cpp onException;
+} EventHandler_cpp;
 
 
 //Handler Prototypes
-void onReadHandler(player* ) ;
-void onWriteHandler(player* ) ;
-void onExceptionHandler(player* );
+
+
+void onReadHandler_cpp(client& ) ;
+void onWriteHandler_cpp(client& ) ;
+void onExceptionHandler_cpp(client& );
 
 //Event dispatcher prototype
-int dispatchEvent(player* , EventType , EventHandler* );
+int dispatchEvent_cpp(client& , EventType , EventHandler_cpp* );
 
 
 #endif

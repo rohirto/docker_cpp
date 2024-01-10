@@ -1,9 +1,10 @@
 SRC_DIR = src
 INC_DIR = inc
 BUILD_DIR = build
+STATIC_DIR = ../pack_unpack
 
 CXX = g++
-CXXFLAGS = -Wall -I$(INC_DIR) -g -lncurses -pthread
+CXXFLAGS = -Wall -I$(INC_DIR) -g -lncurses -pthread -L$(STATIC_DIR) -lmylib
 
 # Get a list of all .cpp files in the src directory
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)

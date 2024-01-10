@@ -11,7 +11,14 @@
 #include <iostream>
 #include <stdexcept>
 #include "server_sockets.h"
+#include "app_event.h"
 #include "player.h"
+
+#define USE_THREADS 0
+
+
+#if USE_THREADS
+std::mutex myMutex; // Declare a mutex
 
 player* server::dequeue()
 {
@@ -28,7 +35,7 @@ player* server::dequeue()
 }
 
 void server::thread_function(int index) {
-    std::cout << "Thread " << index << " is running.\n";
+    
     // Your thread logic here
 
     while(1)
@@ -51,6 +58,8 @@ void server::thread_function(int index) {
             //We have a new connection handle it acc
             p->set_threadID(index);
 
+            std::cout << "Thread " << index << " is running.\n";
+
             //Handle the client
             client_handle(p);
 
@@ -61,14 +70,19 @@ void server::thread_function(int index) {
     }
 }
 
+#endif
 server::server()
 {
+    #if USE_THREADS
     //create thread pool 
     for (int i = 0; i < NUM_THREADS; ++i) {
         thread_pool.emplace_back([this, i]() {
             thread_function(i);
         });
     }
+    #endif
+
+    no_of_active_connections = 0;
 
     // get us a socket and bind it
     hints = {};
@@ -136,6 +150,11 @@ server::server()
 
 }
 
+client::client(int no)
+{
+    p = player(no);
+}
+
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET)
@@ -145,12 +164,12 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
-int server::server_listen()
+int server::server_listen(client& p1, client& p2)
 {
     //Listen
     try
     {
-        if (listen(listener, 10) == -1)  //10 is max listener backlog
+        if (listen(listener, 2) == -1)  //2 is max listener backlog
         {
             
             throw "listen";
@@ -195,6 +214,25 @@ int server::server_listen()
             continue;
         }
 
+        //Can have simple 2 objects instead of 2 theads
+
+        if(no_of_active_connections == 1)
+        {
+            p1.set_socket(newfd);
+            p1.set_firstflag(255);
+
+        }
+        else if(no_of_active_connections == 2)
+        {
+            p2.set_socket(newfd);
+            p2.set_firstflag(255);
+
+            return 0;
+
+        }
+        
+    
+#if USE_THREADS
         //Make a new player
         player *p = new player();
         if(p == nullptr)
@@ -214,10 +252,15 @@ int server::server_listen()
             player_queue.push(p);
             condition_var.notify_one();
         }// Unlock the mutex automatically when the unique_lock goes out of scope
+#endif
+
+        
         
 
     }
 }
+
+#if USE_THREADS
 
 void server::thread_joining()
 {
@@ -227,6 +270,8 @@ void server::thread_joining()
         thread.join();
     }
 }
+
+#endif
 
 /**
  * @brief Make the socket Non Blocking, to acheive async functionality
@@ -245,7 +290,7 @@ int server::make_sock_nonblocking(int fd)
     return 0;
 }
 
-
+#if USE_THREADS
 void server::client_handle(player* p)
 {
     player client = *p;
@@ -258,7 +303,98 @@ void server::client_handle(player* p)
     client.set_msgflag(0);
     client.set_errorflag(0);
 
+    EventType event;
+    // Set up event handlers
+    EventHandler eventHandler = 
+    {
+        .onRead = onReadHandler,
+        .onWrite = onWriteHandler,
+        .onException = onExceptionHandler
+    };
+
+    fd_set c_master;                      // master file descriptor list
+    fd_set c_read_fds;                    // temp file descriptor list for select()
+    fd_set c_write_fds;
+    int c_fdmax;
+
+    //Initialize FDs
+    // Initialize file descriptor sets
+    FD_ZERO(&c_master); // clear the master and temp sets
+    FD_ZERO(&c_read_fds);
+    FD_ZERO(&c_write_fds);
+
+    FD_SET(client.get_socket(), &c_master);
+    // keep track of the biggest file descriptor
+    c_fdmax = client.get_socket(); // so far, it's this one
+
+    while(1)
+    {
+        c_read_fds = c_master;                                              // copy it, need to keep a safe copy of master fds
+        c_write_fds = c_master;  
+
+        // Use select to wait for activity on descriptors
+        if (select(c_fdmax + 1, &c_read_fds, &c_write_fds, NULL, NULL) == -1) 
+        {
+
+            std::cerr << "select";
+            continue;
+        }
+        // run through the existing connections looking for data to read
+        // Visualizing this loop as a polling agent,which will be used to call our event dispatcher
+        if (FD_ISSET(client.get_socket(), &c_read_fds))
+        {
+            event = READ_EVENT;
+            {
+                std::lock_guard<std::mutex> lock(myMutex);
+                retval = dispatchEvent(&client, event, &eventHandler);
+            }//mutex lock unlocks after out of scope
+            if(retval  == -2)
+            {
+                //Close the socket and return only when 0 is received on recv
+                close(client.get_socket());
+                FD_CLR(client.get_socket(),&c_master);
+                return; //Socket closed due to error
+            }
+
+            
+        }
+    }
+
+    //receive the player name
+
     
 
 
+}
+
+#endif
+
+/**
+ * @brief receive all the bytes of len to socket 
+ * @param int s - socket descriptor
+ * @param unsigned char *buf - buffer to be rx
+ * @param int* len - len to be rx, also how many bytes were actually rx is updated here
+ * @returns -1 on failure or 0 on success
+ * 
+ * @paragraph - to check if socket is closed on other side, just check the *len, if it is zero then connection was closed
+ * @callergraph
+*/
+int recvall(int s, void *buf, int *len)
+{
+    unsigned char* buff = (unsigned char*) buf;
+    int total = 0;        // how many bytes we've received
+    int bytesleft = *len; // how many bytes we have left to receive
+    int n = 0;
+    while (total < *len)
+    {
+        n = recv(s, buff + total, bytesleft, 0);
+        if (n == -1)
+        {
+            break;
+        }
+        total += n;
+        bytesleft -= n;
+    }
+    *len = total;            // return the number actually received here
+    return n == -1 ? -1 : 0; // return -1 on failure, 0 on success
 }

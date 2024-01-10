@@ -162,6 +162,7 @@ public:
 
     bool operator!=(const piece& other){if(is_king == other.is_king && position == other.position &&  
                                          is_daa_done == other.is_daa_done ){return false;} return true;};
+    //virtual piece& operator=(piece&& other) noexcept;
 
 
 };
@@ -170,7 +171,7 @@ public:
  * @brief Player class
  * 
  */
-class player: virtual public piece{
+class player:  public piece{
     std::string name;
     int player_no; //1 or 2
     bool turn;   //true if player's turn 
@@ -181,13 +182,6 @@ class player: virtual public piece{
 
     std::map<int,std::pair<int,int>> player_map; // 26 steps that player has to complete
 
-    int socket;                 /**< Scket FD of the USer*/
-    int threadID;               /**< Thread ID, 0 to 20 */
-    int first_flag;             /**< 255 when first initialized, 0 when the user has been sent username list even once */
-    int config_flag;            /**< Set when some config packet is received and needs to be processesd*/
-    int msg_flag;               /**< Set when some message packet is received */
-    int error_flag;             /**< Set when some error flag is received */
-
 
     
 
@@ -195,7 +189,7 @@ class player: virtual public piece{
 public:
     player(){}
     explicit player(int no);
-    void setname();
+    void setname(const char* s);
     std::string getname();
     std::map<int,piece> pawn_get_pos();
     piece king_get_pos();
@@ -212,19 +206,8 @@ public:
     bool get_kill(){return has_killed;}
     bool is_daa_remaining();
 
-    void set_socket(int sock){socket = sock;}
-    void set_firstflag(int val){first_flag = val;}
-    void set_threadID(int val){threadID = val;}
-    void set_configflag(int val){config_flag = val;}
-    void set_msgflag(int val){msg_flag = val;}
-    void set_errorflag(int val){error_flag = val;}
+    //player& operator=(player&& other) noexcept ;
 
-    int get_threadID(){return threadID;}
-    int get_configflag(){return config_flag;}
-    int get_msgflag(){return msg_flag;}
-    int get_errorflag(){return error_flag;}
-    int get_firstflag(){return first_flag;}
-    int get_socket(){return socket;}
 
 
 private:

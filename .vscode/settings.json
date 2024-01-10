@@ -86,6 +86,11 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "money.h": "c"
-    }
+        "money.h": "c",
+        "app_event.h": "c",
+        "player.h": "c",
+        "game_sockets.h": "c",
+        "queue": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }
