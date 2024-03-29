@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package ADDRESS_BOOK;
+
+import "person.proto";
+
+message AddressBook {
+    repeated PERSON.Person people = 1;
+}

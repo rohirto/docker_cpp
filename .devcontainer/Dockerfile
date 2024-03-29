@@ -20,6 +20,7 @@ RUN apt-get update && \
     graphviz \
     libboost-all-dev \
     libsfml-dev \
+    protobuf-compiler \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
