@@ -1,0 +1,4 @@
+[submodule "FreeRTOS-Cpp"]
+	path = FreeRTOS-Cpp
+	url = https://github.com/rohirto/FreeRTOS-Cpp.git
+	branch = develop
