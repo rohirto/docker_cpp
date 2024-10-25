@@ -201,6 +201,27 @@
             ],
             "group": "build",
             "detail": "with -Wall, -g and -o flags."
+        },
+        {
+            "label": "Build FreeRTOS Cpp Project",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/freertos_cpp && mkdir build && cd build && cmake .. && cmake --build .",
+            "group": "build",
+            "detail": "Build the FreeRTOS Cpp Project"
+        },
+        {
+            "label": "Run FreeRTOS Cpp Project",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/freertos_cpp/build && ./MyCppExecutable",
+            "group": "none",
+            "detail": "Run FreeRTOS Cpp Project"
+        },
+        {
+            "label": "Clean FreeRTOS Cpp Project",
+            "type": "shell",
+            "command": "rm -rf ${workspaceFolder}/freertos_cpp/build",
+            "group": "build",
+            "detail": "Clean the FreeRTOS Cpp Project"
         }
     ],
     "version": "2.0.0"
