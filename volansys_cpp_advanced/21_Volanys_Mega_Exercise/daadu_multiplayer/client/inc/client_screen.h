@@ -13,13 +13,16 @@
 
 #include <iostream>
 
+#define WIDTH 16
+#define HEIGHT 6
+
 class client_screen
 {
+    int width;
+    int height;
+
     public:
-    static client_screen& get_instance() {
-        static client_screen instance;
-        return instance;
-    }
+    client_screen() : width(WIDTH), height(HEIGHT) {} // Constructor
 
     /**
      * @brief Display a template in red color on terminal
@@ -83,11 +86,19 @@ class client_screen
         std::system("clear");
     }
 
-    private:
-    client_screen() {} // Private constructor
-    client_screen(const client_screen&) = delete;
-    client_screen& operator=(const client_screen&) = delete;
+    int getwidth(){return width;}
+    int getheight(){return height;}
 
+    char get_char();
+    int get_int();
+    std::string get_string();
+
+
+    //Vitual funcs
+    virtual int display_menu()=0;
+    virtual char display_cowry_menu(std::string_view name)=0;
+    virtual char display_daa_menu()=0;
+    virtual char display_rules()=0;
 
 
 };

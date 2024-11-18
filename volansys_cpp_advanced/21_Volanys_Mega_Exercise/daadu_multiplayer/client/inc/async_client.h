@@ -15,5 +15,7 @@
 #include <iostream>
 #include <string>
 
+//Player Protocol
+
 
 void sync_tcp_client(const std::string& server_ip);
