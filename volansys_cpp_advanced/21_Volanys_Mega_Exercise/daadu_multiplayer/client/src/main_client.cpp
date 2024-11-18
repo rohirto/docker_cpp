@@ -11,10 +11,12 @@
 
 #include "client_screen.h"
 #include "async_client.h"
+#include "game_menu.h"
 
 
 #include <boost/asio.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 namespace asio = boost::asio;
 using namespace std::placeholders;
 using asio::ip::tcp;
@@ -85,5 +87,21 @@ class TCPClient {
 int main() {
     asio::io_context ioc;
     TCPClient        client(ioc, "127.0.0.1", "12345");
-    ioc.run();
+    
+
+    client_screen *window;  //Polymorphic class
+    menu m;
+
+    window = &m;
+    int choice = window->display_menu();
+
+    if (choice == 1)
+    {
+        // Start the game
+        window->clear();
+
+        //Get the list of players on the Server
+
+        ioc.run();
+    }
 }
