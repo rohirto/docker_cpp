@@ -20,6 +20,10 @@
 #include <set>
 #include <utility>
 #include "game_menu.h"
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 
 //House position pairs
@@ -206,6 +210,7 @@ public:
     bool if_check_pt_reached(std::pair<int,int> new_pos);
     bool get_kill(){return has_killed;}
     bool is_daa_remaining();
+    json to_json() const;
 
 private:
     bool helper_move_piece(piece& p,int steps,int piece_no, player& other);

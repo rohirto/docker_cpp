@@ -766,3 +766,11 @@ void player::move_piece(int steps, player &other)
         }
     }
 }
+
+json player::to_json() const
+{
+    json player_obj;
+
+    player_obj
+
+}
