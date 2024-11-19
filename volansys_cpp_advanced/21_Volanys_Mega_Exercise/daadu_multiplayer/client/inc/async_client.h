@@ -15,11 +15,33 @@
 #include <iostream>
 #include <string>
 #include <nlohmann/json.hpp>
-
+#include "json_defines.h"
+#include "game_event.h"
 namespace asio = boost::asio;
 using namespace std::placeholders;
 using asio::ip::tcp;
 using boost::system::error_code;
+
+
+/**
+ * @brief ClientMessage Object, 
+ * Message is json
+ * Parameters - 
+ *  message_type: CONFIG_MESSAGE or GAME_MESSAGE
+ *  payload: Enclosed object
+ * 
+ */
+struct ClientMessage{
+    nlohmann::json obj;
+
+    public:
+    ClientMessage(nlohmann::json& m);
+
+    //Friend functions
+    friend void to_json(nlohmann::json& j, const ClientMessage& m);
+    friend void from_json(const nlohmann::json& j, ClientMessage& m);
+
+};
 
 class TCPClient {
     public:
@@ -43,4 +65,6 @@ class TCPClient {
 
 
 };
+
+
 

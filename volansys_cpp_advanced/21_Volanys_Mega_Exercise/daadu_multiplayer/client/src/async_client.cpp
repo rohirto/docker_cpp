@@ -31,7 +31,14 @@ void TCPClient::handle_connect(error_code ec)
     if (!ec)
     {
         std::cout << "connected" << std::endl;
-        do_write(hello_message);
+        Client_Init player;
+        nlohmann::json j = player; //Serialize to json
+        ClientMessage init_player(j);
+        j = init_player;
+        //do_write(hello_message);
+        std::cout << j.dump(4) << std::endl;
+        write(j.dump(4));
+        write("\r\n");
         read();
     }
     else
@@ -75,4 +82,34 @@ void TCPClient::handle_read(error_code ec, size_t bytes_transferred)
 void TCPClient::do_close()
 {
     socket_.close();
+}
+
+
+ClientMessage::ClientMessage(nlohmann::json& m)
+{
+    obj = m;
+}
+
+void to_json(nlohmann::json& j, const ClientMessage& m)
+{
+    j = m.obj;
+}
+
+void from_json(const nlohmann::json& j, ClientMessage& m)
+{
+    int m_type = j.at(JSON_MESSAGE_TYPE).get<int>();
+
+    std::cout << "Incoming message type :" << m_type << std::endl;
+
+    switch (m_type)
+    {
+    case JSON_CONFIG_MESSAGE:
+        /* code */
+        break;
+    case JSON_GAME_MESSAGE:
+        break;
+    
+    default:
+        break;
+    }
 }

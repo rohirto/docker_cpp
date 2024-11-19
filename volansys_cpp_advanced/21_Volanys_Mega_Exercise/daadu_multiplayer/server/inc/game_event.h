@@ -12,14 +12,13 @@
 #pragma once
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include "game_menu.h" 
 
-struct Client_Init: public menu
+struct Client_Init
 {
     std::string name;
 
     public:
-    Client_Init();
+    void print_name(){std::cout << name << std::endl;}
 
     //Friend Functions
     friend void to_json(nlohmann::json& j, const Client_Init& m);

@@ -166,8 +166,10 @@ public:
 
     bool operator!=(const piece& other){if(is_king == other.is_king && position == other.position &&  
                                          is_daa_done == other.is_daa_done ){return false;} return true;};
-    
-    
+
+    //Friend functions
+    friend void to_json(json& j, const piece& p);
+    friend void from_json(const json& j, piece& p);
 
 
 };
@@ -210,7 +212,6 @@ public:
     bool if_check_pt_reached(std::pair<int,int> new_pos);
     bool get_kill(){return has_killed;}
     bool is_daa_remaining();
-    json to_json() const;
 
 private:
     bool helper_move_piece(piece& p,int steps,int piece_no, player& other);
@@ -218,9 +219,14 @@ private:
     void check_overlapping_pieces(std::vector<std::string>& s, std::set<int>& cp,std::pair<const int, piece> &p);
     void check_overlapping_enemy_pieces(player& other, std::set<int>& cp,std::pair<const int, piece> &p);
 
+    //Friend functions
+    friend void to_json(json& j, const player& p);
+    friend void from_json(const json& j, player& p);
+
     
 
 };
+
 
 
 

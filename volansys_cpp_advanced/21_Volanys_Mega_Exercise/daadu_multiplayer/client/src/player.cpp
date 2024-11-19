@@ -767,10 +767,57 @@ void player::move_piece(int steps, player &other)
     }
 }
 
-json player::to_json() const
+void to_json(json& j, const piece& p)
 {
-    json player_obj;
+    json pos = {
+        {"pos1", p.position.first},
+        {"pos2", p.position.second}
+    };
+    j["position"] = pos;
+    j = json{
+        {"is_king", p.is_king},
+        {"is_daa_done", p.is_daa_done},
+        {"is_check_point_reached", p.is_check_point_reached},
+        {"step_no", p.step_no}
+    };
+}
 
-    player_obj
+void from_json(const json& j, piece& p)
+{
+   // Deserialize the nested "position" object
+    p.position.first = j.at("position").at("pos1").get<int>();
+    p.position.second = j.at("position").at("pos2").get<int>();
 
+    // Deserialize other fields
+    p.is_king = j.at("is_king").get<bool>();
+    p.is_daa_done = j.at("is_daa_done").get<bool>();
+    p.is_check_point_reached = j.at("is_check_point_reached").get<bool>();
+    p.step_no = j.at("step_no").get<int>();
+    
+}
+
+void to_json(json &j, const player &p)
+{
+    j = json{
+        {"name", p.name},
+        {"player_no", p.player_no},
+        {"turn", p.turn},
+        {"daa_initiated", p.daa_initiated},
+        {"has_killed", p.has_killed},
+        {"pawn_pos", p.pawn_pos},    // Automatically handles map<int, piece>
+        {"king_pos", p.king_pos},    // Serialize king_pos
+        {"player_map", p.player_map} // Serialize map<int, pair<int, int>>
+    };
+}
+
+void from_json(const json& j, player& p) 
+{
+        p.name = j.at("name").get<std::string>();
+        p.player_no = j.at("player_no").get<int>();
+        p.turn = j.at("turn").get<bool>();
+        p.daa_initiated = j.at("daa_initiated").get<bool>();
+        p.has_killed = j.at("has_killed").get<bool>();
+        p.pawn_pos = j.at("pawn_pos").get<std::map<int, piece>>(); // Deserialize map<int, piece>
+        p.king_pos = j.at("king_pos").get<piece>();                // Deserialize king_pos
+        p.player_map = j.at("player_map").get<std::map<int, std::pair<int, int>>>(); // Deserialize map<int, pair<int, int>>
 }

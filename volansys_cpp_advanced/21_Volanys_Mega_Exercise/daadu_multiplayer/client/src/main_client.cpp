@@ -12,6 +12,7 @@
 #include "client_screen.h"
 #include "async_client.h"
 #include "game_menu.h"
+#include "game_event.h"
 
 
 #include <boost/asio.hpp>
@@ -34,9 +35,11 @@ int main() {
     {
         // Start the game
         window->clear();
+        //player p1(1);  //Initalize player 1 and send its info to server
 
         //Get the list of players on the Server
-
         ioc.run();
+
+        while(1);
     }
 }

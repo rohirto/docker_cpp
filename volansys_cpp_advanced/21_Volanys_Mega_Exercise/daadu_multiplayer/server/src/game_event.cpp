@@ -12,13 +12,6 @@
 #include "game_event.h"
 #include "json_defines.h"
 
-Client_Init::Client_Init()
-{
-    display_yellow("Enter Player ");
-    display_yellow(" name: ");
-
-    name = get_string();
-}
 
 
 void to_json(nlohmann::json& j, const Client_Init& m)
