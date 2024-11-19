@@ -12,6 +12,7 @@
 #include "async_server.h"
 #include "server_screen.h"
 #include <game_event.h>
+#include "json_defines.h"
 
 
 
@@ -38,8 +39,7 @@ private:
                         json received_json = json::parse(received_data);
 
                         // Synchronized output
-                        std::lock_guard<std::mutex> lock(cout_mutex);
-                        std::cout << "Received JSON: " << received_json.dump(4) << std::endl;
+                        ClientMessage m = received_json.get<ClientMessage>();
 
                         // Continue reading
                         self->read();
@@ -120,5 +120,74 @@ void Server::start_accept()
             // Continue accepting new clients
             start_accept();
         });
+}
+
+void Server::add_client_name(const std::string &name)
+{
+    std::lock_guard<std::mutex> lock(name_mutex_);
+    client_names_.push_back(name);
+}
+
+void Server::remove_client_name(const std::string &name)
+{
+    std::lock_guard<std::mutex> lock(name_mutex_);
+    client_names_.erase(std::remove(client_names_.begin(), client_names_.end(), name), client_names_.end());
+}
+
+json Server::get_client_names()
+{
+    std::lock_guard<std::mutex> lock(name_mutex_);
+    return nlohmann::json(client_names_);
+}
+
+/**
+ * @brief Construct a new Client Message:: Client Message object
+ * 
+ * @param m json object
+ */
+// ClientMessage::ClientMessage(json& m)
+// {
+//     obj = m;
+// }
+
+/**
+ * @brief Serialize Method for ClientMessage Class
+ * 
+ * @param j  json object to which object is serialized
+ * @param m Object to be Serialized
+ * 
+ * This method is used by the JSON Library to serialize the object
+ */
+void to_json(json& j, const ClientMessage& m)
+{
+    j[JSON_MESSAGE_TYPE] = m.message_type;
+    j[JSON_PAYLOAD] = m.payload;
+}
+
+/**
+ * @brief Deserialize Method for ClientMessage Class
+ * 
+ * @param j json object to from object is deserialized
+ * @param m Object to be deserialized
+ */
+void from_json(const json& j, ClientMessage& m)
+{
+    int m_type = j.at(JSON_MESSAGE_TYPE).get<int>();
+
+    std::cout << "Incoming message type :" << m_type << std::endl;
+
+    switch (m_type)
+    {
+    case JSON_CONFIG_MESSAGE:
+        /* code */
+        std::cout << "Payload : " << j[JSON_PAYLOAD].dump(4) << std::endl;
+        //Push forward to Config Message Handler - Add to the list
+        break;
+    case JSON_GAME_MESSAGE:
+        break;
+    
+    default:
+        break;
+    }
 }
 

@@ -36,7 +36,9 @@ void to_json(nlohmann::json& j, const Client_Init& m)
 {
     j = nlohmann::json{
         {JSON_MESSAGE_TYPE, JSON_CONFIG_MESSAGE},  //Config Message
-        {"name", m.name}
+        {JSON_PAYLOAD,{
+            {"name", m.name}
+        }}
     };
 }
 
