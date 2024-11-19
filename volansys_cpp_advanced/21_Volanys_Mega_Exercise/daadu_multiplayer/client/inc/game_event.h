@@ -14,6 +14,10 @@
 #include <nlohmann/json.hpp>
 #include "game_menu.h" 
 
+/**
+ * @brief Client Init Class, Player Init Class which will take the player name and send to Server
+ * 
+ */
 struct Client_Init: public menu
 {
     std::string name;

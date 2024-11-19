@@ -12,6 +12,10 @@
 #include "game_event.h"
 #include "json_defines.h"
 
+/**
+ * @brief Construct a new Client_Init::Client_Init object
+ * 
+ */
 Client_Init::Client_Init()
 {
     display_yellow("Enter Player ");
@@ -20,7 +24,14 @@ Client_Init::Client_Init()
     name = get_string();
 }
 
-
+/**
+ * @brief Serialize Method for Client_Init Class
+ * 
+ * @param j  json object to which object is serialized
+ * @param m Object to be Serialized
+ * 
+ * This method is used by the JSON Library to serialize the object
+ */
 void to_json(nlohmann::json& j, const Client_Init& m)
 {
     j = nlohmann::json{
@@ -29,6 +40,12 @@ void to_json(nlohmann::json& j, const Client_Init& m)
     };
 }
 
+/**
+ * @brief Deserialize Method for Client_Init Class
+ * 
+ * @param j json object to from object is deserialized
+ * @param m Object to be deserialized
+ */
 void from_json(const nlohmann::json& j, Client_Init& m)
 {
     j.at("name").get_to(m.name);

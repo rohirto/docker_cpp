@@ -43,6 +43,10 @@ struct ClientMessage{
 
 };
 
+/**
+ * @brief TCP Client Class
+ * 
+ */
 class TCPClient {
     public:
     TCPClient(asio::io_context& ioc, std::string const& host, std::string const& port) : socket_(ioc) {
