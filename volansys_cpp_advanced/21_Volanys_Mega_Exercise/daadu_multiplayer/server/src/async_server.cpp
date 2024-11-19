@@ -17,6 +17,8 @@
 
 
 std::mutex cout_mutex;
+std::vector<std::string> client_names_; // List of client names
+std::mutex name_mutex_;                 // Mutex to protect name list
 
 
 class Session : public std::enable_shared_from_this<Session> {
@@ -40,6 +42,7 @@ private:
 
                         // Synchronized output
                         ClientMessage m = received_json.get<ClientMessage>();
+                        self->process_clientMessage(m);
 
                         // Continue reading
                         self->read();
@@ -72,6 +75,33 @@ private:
                     }
                 }
             });
+    }
+
+    void process_clientMessage(ClientMessage &m)
+    {
+        auto self = shared_from_this();
+        switch (m.message_type)
+        {
+        case JSON_CONFIG_MESSAGE:
+            /* code */
+            std::cout << "Payload : " << m.payload.dump(4) << std::endl;
+            // Push forward to Config Message Handler - Add to the list
+            if (m.payload.contains(JSON_NAME))
+            {
+                add_client_name(m.payload[JSON_NAME]);
+                json response = {
+                    {"message_type", 1},
+                    {"client_names", get_client_names()} 
+                };
+                self->write(response.dump(4) + "\r\n");
+            }
+            break;
+        case JSON_GAME_MESSAGE:
+            break;
+
+        default:
+            break;
+        }
     }
 
     tcp::socket socket_;
@@ -122,19 +152,19 @@ void Server::start_accept()
         });
 }
 
-void Server::add_client_name(const std::string &name)
+void add_client_name(const std::string &name)
 {
     std::lock_guard<std::mutex> lock(name_mutex_);
     client_names_.push_back(name);
 }
 
-void Server::remove_client_name(const std::string &name)
+void remove_client_name(const std::string &name)
 {
     std::lock_guard<std::mutex> lock(name_mutex_);
     client_names_.erase(std::remove(client_names_.begin(), client_names_.end(), name), client_names_.end());
 }
 
-json Server::get_client_names()
+json get_client_names()
 {
     std::lock_guard<std::mutex> lock(name_mutex_);
     return nlohmann::json(client_names_);
@@ -172,22 +202,9 @@ void to_json(json& j, const ClientMessage& m)
  */
 void from_json(const json& j, ClientMessage& m)
 {
-    int m_type = j.at(JSON_MESSAGE_TYPE).get<int>();
-
-    std::cout << "Incoming message type :" << m_type << std::endl;
-
-    switch (m_type)
-    {
-    case JSON_CONFIG_MESSAGE:
-        /* code */
-        std::cout << "Payload : " << j[JSON_PAYLOAD].dump(4) << std::endl;
-        //Push forward to Config Message Handler - Add to the list
-        break;
-    case JSON_GAME_MESSAGE:
-        break;
+    m.message_type = j.at(JSON_MESSAGE_TYPE).get<int>();
+    m.payload = j.at(JSON_PAYLOAD).get<json>();
     
-    default:
-        break;
-    }
 }
+
 

@@ -48,9 +48,7 @@ class Server {
     public:
     Server(asio::io_context& ioc, unsigned short port, std::size_t thread_count);
     void run();
-    void add_client_name(const std::string& name);
-    void remove_client_name(const std::string& name);
-    json get_client_names();
+    
 
     private:
     void start_accept();
@@ -61,7 +59,9 @@ class Server {
     tcp::acceptor    acceptor_;
     std::vector<std::thread> threads_;
     std::size_t      thread_count_;
-    std::vector<std::string> client_names_; // List of client names
-    std::mutex name_mutex_;                 // Mutex to protect name list
 };
 
+
+void add_client_name(const std::string& name);
+void remove_client_name(const std::string& name);
+json get_client_names();

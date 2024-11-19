@@ -54,8 +54,7 @@ void TCPClient::handle_connect(error_code ec)
         ClientMessage init_player(j);
         j = init_player;
         std::cout << j.dump(4) << std::endl;
-        write(j.dump(4));
-        write("\r\n");
+        write(j.dump(4) + "\r\n");
         read();
     }
     else
