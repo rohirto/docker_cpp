@@ -14,6 +14,7 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <string>
+#include <iomanip> // For std::setw
 #include <nlohmann/json.hpp>
 #include "json_defines.h"
 #include "game_event.h"
@@ -47,7 +48,7 @@ struct ClientMessage{
  * @brief TCP Client Class
  * 
  */
-class TCPClient {
+class TCPClient: public menu{
     public:
     TCPClient(asio::io_context& ioc, std::string const& host, std::string const& port) : socket_(ioc) {
         tcp::resolver resolver(ioc);
@@ -55,6 +56,9 @@ class TCPClient {
     }
     void write(std::string const& message);
     void close();
+    void process_response(std::string& response);
+    int display_players(nlohmann::json& player_list);
+    void server_matchup_request(int player_no);
 
     private:
     tcp::socket            socket_;

@@ -17,16 +17,48 @@
 
 
 std::mutex cout_mutex;
-std::vector<std::string> client_names_; // List of client names
-std::mutex name_mutex_;                 // Mutex to protect name list
+std::map<int,std::string> client_map; // List of client names
+int client_counter = 0;               // To assign unique client numbers
+std::mutex client_map_mutex;                 // Mutex to protect name list
+
+std::set<std::shared_ptr<class Session>> active_sessions; // Set of active sessions
+std::mutex active_sessions_mutex;  // Mutex for active_sessions
 
 
 class Session : public std::enable_shared_from_this<Session> {
 public:
     explicit Session(tcp::socket socket)
-        : socket_(std::move(socket)), buffer_("") {}
+        : socket_(std::move(socket)), buffer_(""), client_no(0) {}
 
-    void start() { read(); }
+    void start() { 
+        {
+            std::lock_guard<std::mutex> lock(active_sessions_mutex);
+            active_sessions.insert(shared_from_this());
+        }
+        read();
+
+    }
+    void write(const std::string& message) {
+        auto self = shared_from_this();
+        asio::async_write(socket_, asio::buffer(message),
+                          [self](boost::system::error_code ec, std::size_t /*length*/)
+                          {
+                              if (ec)
+                              {
+                                  {
+                                      std::lock_guard<std::mutex> lock(client_map_mutex);
+                                      std::cerr << "Write Error: " << ec.message() << std::endl;
+                                  }
+                              }
+                          });
+    }
+    ~Session() {
+        // Remove this session from active_sessions
+        {
+            std::lock_guard<std::mutex> lock(active_sessions_mutex);
+            active_sessions.erase(shared_from_this());
+        }
+    }
 
 private:
     void read() {
@@ -48,7 +80,7 @@ private:
                         self->read();
                     } catch (const json::parse_error& e) {
                         {
-                            std::lock_guard<std::mutex> lock(cout_mutex);
+                            std::lock_guard<std::mutex> lock(client_map_mutex);
                             std::cerr << "JSON Parsing Error: " << e.what() << std::endl;
                             
                         }
@@ -57,25 +89,18 @@ private:
                     }
                 } else {
                     {
-                        std::lock_guard<std::mutex> lock(cout_mutex);
+                        std::lock_guard<std::mutex> lock(client_map_mutex);
                         std::cerr << "Client disconnected: " << ec.message() << std::endl;
+                        // Remove client from the map
+                        if (self->client_no != 0) {
+                            client_map.erase(self->client_no);
+                        }
                     }
                 }
             });
     }
 
-    void write(const std::string& message) {
-        auto self = shared_from_this();
-        asio::async_write(socket_, asio::buffer(message),
-            [self](boost::system::error_code ec, std::size_t /*length*/) {
-                if (ec) {
-                    {
-                        std::lock_guard<std::mutex> lock(cout_mutex);
-                        std::cerr << "Write Error: " << ec.message() << std::endl;
-                    }
-                }
-            });
-    }
+    
 
     void process_clientMessage(ClientMessage &m)
     {
@@ -88,13 +113,37 @@ private:
             // Push forward to Config Message Handler - Add to the list
             if (m.payload.contains(JSON_NAME))
             {
-                add_client_name(m.payload[JSON_NAME]);
-                json response = {
-                    {"message_type", 1},
-                    {"client_names", get_client_names()} 
-                };
-                self->write(response.dump(4) + "\r\n");
+                {
+                    std::lock_guard<std::mutex> lock(client_map_mutex);
+                    if (self->client_no == 0)
+                    { // Assign client number if not already done
+                        self->client_no = ++client_counter;
+                        client_map[self->client_no] = m.payload[JSON_NAME];
+                    }
+                }
+                //Send Response
+                json response = json::object();
+                json client_list = json::object();
+                response[JSON_MESSAGE_TYPE] = JSON_CONFIG_MESSAGE;
+                {
+                    std::lock_guard<std::mutex> lock(client_map_mutex);
+                    for (const auto &[no, name] : client_map)
+                    {
+                        client_list[std::to_string(no)] = name;
+                    }
+                }
+                response[JSON_PAYLOAD] = client_list;
+                std::string list_message = response.dump() + "\r\n";
+                self->write(list_message);
             }
+            else
+            {
+                //Name field no there
+            }
+            break;
+        case JSON_MATCHUP_PACKET:
+            std::cout << "Payload : " << m.payload.dump(4) << std::endl;
+            
             break;
         case JSON_GAME_MESSAGE:
             break;
@@ -106,6 +155,7 @@ private:
 
     tcp::socket socket_;
     std::string buffer_;
+    int client_no;
 };
 
 Server::Server(asio::io_context &ioc, unsigned short port, std::size_t thread_count)
@@ -152,23 +202,7 @@ void Server::start_accept()
         });
 }
 
-void add_client_name(const std::string &name)
-{
-    std::lock_guard<std::mutex> lock(name_mutex_);
-    client_names_.push_back(name);
-}
 
-void remove_client_name(const std::string &name)
-{
-    std::lock_guard<std::mutex> lock(name_mutex_);
-    client_names_.erase(std::remove(client_names_.begin(), client_names_.end(), name), client_names_.end());
-}
-
-json get_client_names()
-{
-    std::lock_guard<std::mutex> lock(name_mutex_);
-    return nlohmann::json(client_names_);
-}
 
 /**
  * @brief Construct a new Client Message:: Client Message object

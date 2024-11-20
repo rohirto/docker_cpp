@@ -15,4 +15,6 @@
 #define JSON_MESSAGE_TYPE     "message_type"
 #define JSON_CONFIG_MESSAGE   0
 #define JSON_GAME_MESSAGE     1
+#define JSON_MATCHUP_PACKET   2
 #define JSON_PAYLOAD          "payload"
+#define JSON_PLAYER_NO        "player_no"

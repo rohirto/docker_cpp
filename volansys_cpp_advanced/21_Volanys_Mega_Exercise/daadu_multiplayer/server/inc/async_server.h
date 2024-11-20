@@ -16,6 +16,8 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <map>
+#include <set>
 
 namespace asio = boost::asio;
 using asio::ip::tcp;

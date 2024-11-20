@@ -104,15 +104,81 @@ void TCPClient::handle_read(error_code ec, size_t bytes_transferred)
     std::cout << "Read " << ec.message() << " (" << bytes_transferred << ")" << std::endl;
     if (!ec)
     {
-        std::cout << "Received: "
-                  << std::string(data_.data(), bytes_transferred)
-                  << bytes_transferred << std::endl;
+        // std::cout << "Received: "
+        //           << std::string(data_.data(), bytes_transferred)
+        //           << bytes_transferred << std::endl;
+        std::string r = std::string(data_.data(), bytes_transferred);
+        process_response(r);
+
         read();
     }
     else
     {
         // Handle the error
     }
+}
+
+void TCPClient::process_response(std::string& response)
+{
+    nlohmann::json resp_json = nlohmann::json::parse(response);
+    if(resp_json.contains(JSON_MESSAGE_TYPE))
+    {
+        int m_type = resp_json.at(JSON_MESSAGE_TYPE).get<int>();
+        switch (m_type)
+        {
+        case JSON_CONFIG_MESSAGE:
+        {
+            //Extract the payload
+            nlohmann::json client_list = resp_json["payload"];
+            //Display Players
+            int player_no = display_players(client_list);
+            server_matchup_request(player_no);
+            break;
+        }
+        case JSON_GAME_MESSAGE:
+            break;
+        
+        default:
+            break;
+        }
+
+    }
+    else
+    {
+        //Invalid Packet received
+    }
+
+}
+
+int TCPClient::display_players(nlohmann::json &player_list)
+{
+    clear();
+    display_blue("Availabe Players on Server, Enter no to match up with: \r\n");
+    //  Display the table header
+    std::cout << std::setw(5) << "No." << std::setw(15) << "Name" << std::endl;
+    std::cout << "-----------------------" << std::endl;
+
+    // Iterate through the payload and display the table
+    for (auto &[key, value] : player_list.items())
+    {
+        std::cout << std::setw(5) << key << std::setw(15) << value << std::endl;
+    }
+
+    int selection = get_int();
+
+    return selection;
+}
+
+void TCPClient::server_matchup_request(int player_no)
+{
+    nlohmann::json matchup_json =  nlohmann::json{
+        {JSON_MESSAGE_TYPE,JSON_MATCHUP_PACKET},
+        {JSON_PAYLOAD,{{JSON_PLAYER_NO, player_no}}}
+        
+    };
+
+    write(matchup_json.dump(4) + "\r\n");
+
 }
 
 /**
