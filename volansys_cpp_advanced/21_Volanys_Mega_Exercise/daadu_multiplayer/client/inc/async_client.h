@@ -57,8 +57,10 @@ class TCPClient: public menu{
     void write(std::string const& message);
     void close();
     void process_response(std::string& response);
-    int display_players(nlohmann::json& player_list);
-    void server_matchup_request(int player_no);
+    std::string display_players(nlohmann::json& player_list);
+    void server_matchup_request(std::string& player_no);
+    void set_player_name(std::string& n){player_name = n;}
+    std::string get_player_name(){return player_name;}
 
     private:
     tcp::socket            socket_;
@@ -70,6 +72,10 @@ class TCPClient: public menu{
     void read();
     void handle_read(error_code ec, size_t bytes_transferred);
     void do_close();
+
+    std::string player_name;
+
+
 
 
 };

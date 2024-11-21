@@ -52,6 +52,9 @@ public:
                               }
                           });
     }
+
+    int get_client_no() const { return client_no; }
+
     ~Session() {
         // Remove this session from active_sessions
         {
@@ -138,12 +141,29 @@ private:
             }
             else
             {
-                //Name field no there
+                // Name field no there
             }
             break;
         case JSON_MATCHUP_PACKET:
             std::cout << "Payload : " << m.payload.dump(4) << std::endl;
-            
+            if (m.payload.contains(JSON_PLAYER_NO))
+            {
+                int request_no = m.payload.at(JSON_PLAYER_NO).get<int>();
+                for (const auto &session : active_sessions)
+                {
+                    if (request_no == session->get_client_no())
+                    {
+                        std::cout << "Player no " << request_no << "found" << std::endl;
+                        return; 
+                    }
+                }
+                std::cout << "No such Player" << std::endl;
+            }
+            else
+            {
+                // No field Player no
+            }
+
             break;
         case JSON_GAME_MESSAGE:
             break;

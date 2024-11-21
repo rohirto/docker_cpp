@@ -18,3 +18,4 @@
 #define JSON_MATCHUP_PACKET   2
 #define JSON_PAYLOAD          "payload"
 #define JSON_NAME             "name"
+#define JSON_PLAYER_NO        "player_no"

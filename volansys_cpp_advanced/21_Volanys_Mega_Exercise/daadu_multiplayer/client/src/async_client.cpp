@@ -12,7 +12,7 @@
 
 /**
  * @brief TCP Client Write Method
- * 
+ *
  * @param message Message to write on the Connected Socket
  */
 void TCPClient::write(std::string const &message)
@@ -22,16 +22,16 @@ void TCPClient::write(std::string const &message)
 
 /**
  * @brief TCP Client Close Method
- * 
+ *
  */
-void TCPClient::close() { 
-    post(socket_.get_executor(), std::bind(&TCPClient::do_close, this)); 
+void TCPClient::close()
+{
+    post(socket_.get_executor(), std::bind(&TCPClient::do_close, this));
 }
-
 
 /**
  * @brief TCP Client Connect Method
- * 
+ *
  * @param endpoint_iterator resolver for Host and Service
  */
 void TCPClient::connect(tcp::resolver::iterator endpoint_iterator)
@@ -41,18 +41,21 @@ void TCPClient::connect(tcp::resolver::iterator endpoint_iterator)
 
 /**
  * @brief TCP Client connect callback Function
- * 
+ *
  * @param ec Error Code
  */
 void TCPClient::handle_connect(error_code ec)
 {
     if (!ec)
     {
-        std::cout << "connected" << std::endl;
-        Client_Init player;
-        nlohmann::json j = player; //Serialize to json
-        ClientMessage init_player(j);
-        j = init_player;
+        display_green("Connected to Server\r\n");
+        display_blue("Enter Player name: \r\n");
+        std::string n = get_string();
+        set_player_name(n);
+
+        nlohmann::json j = nlohmann::json{
+            {JSON_MESSAGE_TYPE, JSON_CONFIG_MESSAGE},          // Config Message
+            {JSON_PAYLOAD, {{JSON_NAME, get_player_name()}}}}; // Serialize to json
         std::cout << j.dump(4) << std::endl;
         write(j.dump(4) + "\r\n");
         read();
@@ -65,7 +68,7 @@ void TCPClient::handle_connect(error_code ec)
 
 /**
  * @brief TCP Client Private Write Method
- * 
+ *
  * @param message Message to be written
  */
 void TCPClient::do_write(std::string const &message)
@@ -75,16 +78,17 @@ void TCPClient::do_write(std::string const &message)
 
 /**
  * @brief TCP Client Write Callback Method
- * 
+ *
  * @param ec Error Code
  */
-void TCPClient::handle_write(error_code ec) { 
-    std::cout << "write " << ec.message() << std::endl; 
+void TCPClient::handle_write(error_code ec)
+{
+    std::cout << "write " << ec.message() << std::endl;
 }
 
 /**
  * @brief TCP Client Read Method
- * 
+ *
  */
 void TCPClient::read()
 {
@@ -95,7 +99,7 @@ void TCPClient::read()
 
 /**
  * @brief TCP Client Read Callback Method
- * 
+ *
  * @param ec Error Code
  * @param bytes_transferred  Bytes read
  */
@@ -118,42 +122,41 @@ void TCPClient::handle_read(error_code ec, size_t bytes_transferred)
     }
 }
 
-void TCPClient::process_response(std::string& response)
+void TCPClient::process_response(std::string &response)
 {
     nlohmann::json resp_json = nlohmann::json::parse(response);
-    if(resp_json.contains(JSON_MESSAGE_TYPE))
+    if (resp_json.contains(JSON_MESSAGE_TYPE))
     {
         int m_type = resp_json.at(JSON_MESSAGE_TYPE).get<int>();
         switch (m_type)
         {
         case JSON_CONFIG_MESSAGE:
         {
-            //Extract the payload
+            // Extract the payload
             nlohmann::json client_list = resp_json["payload"];
-            //Display Players
-            int player_no = display_players(client_list);
+            // Display Players
+            std::string player_no = display_players(client_list);
             server_matchup_request(player_no);
             break;
         }
         case JSON_GAME_MESSAGE:
             break;
-        
+
         default:
             break;
         }
-
     }
     else
     {
-        //Invalid Packet received
+        // Invalid Packet received
     }
-
 }
 
-int TCPClient::display_players(nlohmann::json &player_list)
+std::string TCPClient::display_players(nlohmann::json &player_list)
 {
     clear();
     display_blue("Availabe Players on Server, Enter no to match up with: \r\n");
+    display_green("Press R to refresh the list\r\n");
     //  Display the table header
     std::cout << std::setw(5) << "No." << std::setw(15) << "Name" << std::endl;
     std::cout << "-----------------------" << std::endl;
@@ -163,27 +166,60 @@ int TCPClient::display_players(nlohmann::json &player_list)
     {
         std::cout << std::setw(5) << key << std::setw(15) << value << std::endl;
     }
+    while (true)
+    {
+        std::string selection = get_string();
+        // Check if input is 'R' or 'r'
+        if (selection.size() == 1 && (tolower(selection[0]) == 'r'))
+        {
+            return "R"; // Normalize to uppercase 'R'
+        }
 
-    int selection = get_int();
+        // Check if input is numeric
+        bool is_numeric = true;
+        for (char c : selection)
+        {
+            if (!isdigit(c))
+            {
+                is_numeric = false;
+                break;
+            }
+        }
 
-    return selection;
+        if (is_numeric)
+        {
+            return selection; // Valid numeric input
+        }
+
+        display_red("Invalid Input please try again\r\n");
+    }
 }
 
-void TCPClient::server_matchup_request(int player_no)
+void TCPClient::server_matchup_request(std::string& player_no)
 {
-    nlohmann::json matchup_json =  nlohmann::json{
-        {JSON_MESSAGE_TYPE,JSON_MATCHUP_PACKET},
-        {JSON_PAYLOAD,{{JSON_PLAYER_NO, player_no}}}
-        
-    };
+    nlohmann::json j;
+    if (player_no == "R")
+    {
+        // Send Refresh Packet
+        j = nlohmann::json{
+            {JSON_MESSAGE_TYPE, JSON_CONFIG_MESSAGE},        // Config Message
+            {JSON_PAYLOAD, {{JSON_NAME, get_player_name()}}} // Serialize to json
+        };
+    }
+    else
+    {
+        j = nlohmann::json{
+            {JSON_MESSAGE_TYPE, JSON_MATCHUP_PACKET},
+            {JSON_PAYLOAD, {{JSON_PLAYER_NO, std::stoi(player_no)}}}
 
-    write(matchup_json.dump(4) + "\r\n");
-
+        };
+    }
+    write(j.dump(4) + "\r\n");
 }
 
 /**
  * @brief TCP Client Private Close Method
- * 
+ *
  */
 void TCPClient::do_close()
 {
@@ -192,34 +228,34 @@ void TCPClient::do_close()
 
 /**
  * @brief Construct a new Client Message:: Client Message object
- * 
+ *
  * @param m json object
  */
-ClientMessage::ClientMessage(nlohmann::json& m)
+ClientMessage::ClientMessage(nlohmann::json &m)
 {
     obj = m;
 }
 
 /**
  * @brief Serialize Method for ClientMessage Class
- * 
+ *
  * @param j  json object to which object is serialized
  * @param m Object to be Serialized
- * 
+ *
  * This method is used by the JSON Library to serialize the object
  */
-void to_json(nlohmann::json& j, const ClientMessage& m)
+void to_json(nlohmann::json &j, const ClientMessage &m)
 {
     j = m.obj;
 }
 
 /**
  * @brief Deserialize Method for ClientMessage Class
- * 
+ *
  * @param j json object to from object is deserialized
  * @param m Object to be deserialized
  */
-void from_json(const nlohmann::json& j, ClientMessage& m)
+void from_json(const nlohmann::json &j, ClientMessage &m)
 {
     int m_type = j.at(JSON_MESSAGE_TYPE).get<int>();
 
@@ -232,7 +268,7 @@ void from_json(const nlohmann::json& j, ClientMessage& m)
         break;
     case JSON_GAME_MESSAGE:
         break;
-    
+
     default:
         break;
     }
