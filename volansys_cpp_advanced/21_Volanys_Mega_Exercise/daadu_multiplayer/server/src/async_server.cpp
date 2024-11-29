@@ -108,11 +108,10 @@ private:
     void process_clientMessage(ClientMessage &m)
     {
         auto self = shared_from_this();
+        std::cout << "Payload : " << m.payload.dump(4) << std::endl;
         switch (m.message_type)
         {
         case JSON_CONFIG_MESSAGE:
-            /* code */
-            std::cout << "Payload : " << m.payload.dump(4) << std::endl;
             // Push forward to Config Message Handler - Add to the list
             if (m.payload.contains(JSON_NAME))
             {
@@ -145,7 +144,6 @@ private:
             }
             break;
         case JSON_MATCHUP_PACKET:
-            std::cout << "Payload : " << m.payload.dump(4) << std::endl;
             if (m.payload.contains(JSON_PLAYER_NO))
             {
                 int request_no = m.payload.at(JSON_PLAYER_NO).get<int>();
@@ -154,6 +152,15 @@ private:
                     if (request_no == session->get_client_no())
                     {
                         std::cout << "Player no " << request_no << "found" << std::endl;
+                        //Send the Matchup request to that Player
+                        json response = json::object();
+                        response[JSON_MESSAGE_TYPE] = JSON_MATCHUP_PACKET;
+                        json player_request = json::object();
+                        player_request[JSON_PLAYER_NO] = self->get_client_no();
+                        response[JSON_PAYLOAD] = player_request;
+                        std::string m_request = response.dump() + "\r\n";
+                        session->write(m_request);
+                        std::cout << "Sent Match up request from Player " << self->get_client_no() << "to Player " << session->get_client_no() << std::endl;
                         return; 
                     }
                 }

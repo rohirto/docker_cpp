@@ -18,7 +18,7 @@
  * 
  * @return int option that user has selected
  */
-int menu::display_menu()
+void menu::display_menu()
 {
     display_yellow("█████ █████ █████ █████ █████ █████ █████");
     std::cout << std::endl;
@@ -42,9 +42,9 @@ int menu::display_menu()
     display_green("2. Rules to play\n");
     display_red("3. Exit the game\n");
 
-    int c = get_int();
+    //int c = get_int();
 
-    return c;
+    //return c;
 
     //clear();
 
@@ -55,7 +55,7 @@ int menu::display_menu()
  * 
  * @return char 
  */
-char menu::display_rules()
+void menu::display_rules()
 {
     
 
@@ -142,9 +142,6 @@ std::cout << std::endl;
 
 display_red("Press q to to go back");
 
-char c = get_char();
-
-return c;
 
 }
 

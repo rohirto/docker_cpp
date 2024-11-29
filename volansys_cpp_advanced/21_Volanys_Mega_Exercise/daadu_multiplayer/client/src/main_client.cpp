@@ -21,25 +21,39 @@
 
 
 int main() {
-    asio::io_context ioc;
-    TCPClient        client(ioc, "127.0.0.1", "12345");
-    
-
-    client_screen *window;  //Polymorphic class
-    menu m;
-
-    window = &m;
-    int choice = window->display_menu();
-
-    if (choice == 1)
+    try
     {
-        // Start the game
-        window->clear();
-        //player p1(1);  //Initalize player 1 and send its info to server
+        #if 0
+        asio::io_context ioc;
+        TCPClient client(ioc, "127.0.0.1", "12345"); //In funture this will be some DHCP discovery
 
-        //Get the list of players on the Server
-        ioc.run();
+        client_screen *window; // Polymorphic class
+        menu m;
 
-        while(1);
+        window = &m;
+        int choice = window->display_menu();
+
+        if (choice == 1)
+        {
+            // Start the game
+            window->clear();
+            // player p1(1);  //Initalize player 1 and send its info to server
+
+            // Get the list of players on the Server
+            ioc.run();
+
+            while (1)
+                ;
+        }
+        #else
+        TCPClient client("127.0.0.1", 12345);
+        client.run();
+        #endif
     }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
+    
 }

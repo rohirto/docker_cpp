@@ -90,7 +90,13 @@
         "app_event.h": "c",
         "player.h": "c",
         "game_sockets.h": "c",
-        "queue": "cpp"
+        "queue": "cpp",
+        "expected": "cpp",
+        "format": "cpp",
+        "spanstream": "cpp",
+        "stacktrace": "cpp",
+        "stdfloat": "cpp",
+        "*.ipp": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
