@@ -228,7 +228,17 @@ void Session::read() {
                         if (player2_it != session_map.end())
                         {
                             auto player2_session = player2_it->second;
-
+                            //Remove these players from client map
+                            auto it = client_map.find(player2_session->get_client_no());
+                            if (it != client_map.end())
+                            {
+                                client_map.erase(it);
+                            }
+                            it = client_map.find(player1_session->get_client_no());
+                            if (it != client_map.end())
+                            {
+                                client_map.erase(it);
+                            }
                             // Players 1 and 2 are found; start the game
                             std::cout << "Game started with ID: " << game_id << std::endl;
                             // Start game logic here

@@ -457,6 +457,7 @@ void TCPClient::process_user_input()
                 //User pressed enter
                 clear();
                 display_green("Starting Game\r\n");
+                client_state_ = ClientState::SERVER_GAME_START_NOTIFY_RX;
             }
             break;
         case ClientState::Idle:
@@ -562,12 +563,13 @@ void TCPClient::handle_server_response()
                                 display_green(" has accepted the request.\r\n Press ");
                                 display_blue("Enter ");
                                 display_green("to start the game\r\n");
-                                client_state_ = ClientState::WAIT_TO_START;
+                                client_state_ = ClientState::ACCEPTED_GAME_REQUEST;
                             }
 
                         }
                         break;
                     case ClientState::ACCEPTED_GAME_REQUEST:
+
                         break;
                     case ClientState::Idle:
                         std::cout << "Received unexpected data while idle." << std::endl;

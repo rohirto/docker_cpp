@@ -106,6 +106,7 @@ class TCPClient: public menu{
         RECEIVED_MATCHUP_RESPONSE,
         ACCEPTED_GAME_REQUEST,
         WAIT_TO_START,
+        SERVER_GAME_START_NOTIFY_RX,
         Idle,
         WaitingForOpponent,
         Playing,
