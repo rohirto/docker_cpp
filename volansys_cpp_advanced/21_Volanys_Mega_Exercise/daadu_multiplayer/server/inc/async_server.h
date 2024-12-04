@@ -63,7 +63,20 @@ class Server {
     std::size_t      thread_count_;
 };
 
+class Session : public std::enable_shared_from_this<Session> {
+    public:
+    explicit Session(tcp::socket socket)
+        : socket_(std::move(socket)), buffer_(""), client_no(0) {}
+    
+    void start();
+    void write(const std::string& message);
+    int get_client_no() const { return client_no; }
+    ~Session();
+    private:
+    void read();
+    void process_clientMessage(ClientMessage &m);
 
-void add_client_name(const std::string& name);
-void remove_client_name(const std::string& name);
-json get_client_names();
+    tcp::socket socket_;
+    std::string buffer_;
+    int client_no;
+};

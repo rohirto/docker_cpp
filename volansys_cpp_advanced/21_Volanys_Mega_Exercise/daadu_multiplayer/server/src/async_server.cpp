@@ -13,6 +13,7 @@
 #include "server_screen.h"
 #include <game_event.h>
 #include "json_defines.h"
+#include "game_server.h"
 
 
 
@@ -24,47 +25,43 @@ std::mutex client_map_mutex;                 // Mutex to protect name list
 std::set<std::shared_ptr<class Session>> active_sessions; // Set of active sessions
 std::mutex active_sessions_mutex;  // Mutex for active_sessions
 
+std::unordered_map<int, std::shared_ptr<Game>> active_games;
 
-class Session : public std::enable_shared_from_this<Session> {
-public:
-    explicit Session(tcp::socket socket)
-        : socket_(std::move(socket)), buffer_(""), client_no(0) {}
-
-    void start() { 
-        {
-            std::lock_guard<std::mutex> lock(active_sessions_mutex);
-            active_sessions.insert(shared_from_this());
-        }
-        read();
-
+void Session::start()
+{
+    {
+        std::lock_guard<std::mutex> lock(active_sessions_mutex);
+        active_sessions.insert(shared_from_this());
     }
-    void write(const std::string& message) {
-        auto self = shared_from_this();
-        asio::async_write(socket_, asio::buffer(message),
-                          [self](boost::system::error_code ec, std::size_t /*length*/)
+    read();
+}
+
+void Session::write(const std::string &message)
+{
+    auto self = shared_from_this();
+    asio::async_write(socket_, asio::buffer(message),
+                      [self](boost::system::error_code ec, std::size_t /*length*/)
+                      {
+                          if (ec)
                           {
-                              if (ec)
                               {
-                                  {
-                                      std::lock_guard<std::mutex> lock(client_map_mutex);
-                                      std::cerr << "Write Error: " << ec.message() << std::endl;
-                                  }
+                                  std::lock_guard<std::mutex> lock(client_map_mutex);
+                                  std::cerr << "Write Error: " << ec.message() << std::endl;
                               }
-                          });
+                          }
+                      });
+}
+
+Session::~Session()
+{
+    // Remove this session from active_sessions
+    {
+        std::lock_guard<std::mutex> lock(active_sessions_mutex);
+        active_sessions.erase(shared_from_this());
     }
+}
 
-    int get_client_no() const { return client_no; }
-
-    ~Session() {
-        // Remove this session from active_sessions
-        {
-            std::lock_guard<std::mutex> lock(active_sessions_mutex);
-            active_sessions.erase(shared_from_this());
-        }
-    }
-
-private:
-    void read() {
+void Session::read() {
         auto self = shared_from_this();
         asio::async_read_until(socket_, asio::dynamic_buffer(buffer_), "\r\n",
             [self](boost::system::error_code ec, std::size_t length) {
@@ -105,7 +102,7 @@ private:
 
     
 
-    void process_clientMessage(ClientMessage &m)
+    void Session::process_clientMessage(ClientMessage &m)
     {
         auto self = shared_from_this();
         std::cout << "Payload : " << m.payload.dump(4) << std::endl;
@@ -207,7 +204,14 @@ private:
                         session->write(m_response);
                         std::cout << "Sent Match up response from Player " << source_player << "to Player " <<  dest_player << std::endl;
                     }
+                    if (requested_response == JSON_POSITIVE)
+                    {
+                        // Start the game for 2 players
+                        int game_id = 1 + (rand() % 100);
+                        //auto game = std::make_shared<Game>(session, player2_session);
+                    }
                 }
+               
             }
             break;
         case JSON_GAME_MESSAGE:
@@ -218,10 +222,6 @@ private:
         }
     }
 
-    tcp::socket socket_;
-    std::string buffer_;
-    int client_no;
-};
 
 Server::Server(asio::io_context &ioc, unsigned short port, std::size_t thread_count)
     : acceptor_(ioc, tcp::endpoint(tcp::v4(), port)), thread_count_(thread_count)
