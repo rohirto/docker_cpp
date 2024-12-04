@@ -27,3 +27,6 @@
 #define JSON_SOURCE_PLAYER    "source_player"
 #define JSON_DEST_PLAYER      "dest_player"
 #define JSON_SERVER_NO        0
+#define JSON_TURN             "turn"
+#define JSON_GAME_TRUE        1
+#define JSON_GAME_FALSE       0

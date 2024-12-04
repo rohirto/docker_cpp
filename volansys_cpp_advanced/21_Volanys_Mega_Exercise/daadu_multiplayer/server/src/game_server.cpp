@@ -19,13 +19,15 @@ void Game::notify_game_start()
     j[JSON_MESSAGE_TYPE] = JSON_GAME_MESSAGE;
     j[JSON_PAYLOAD] = json{
         {JSON_SOURCE_PLAYER, JSON_SERVER_NO},
-        {JSON_DEST_PLAYER, player1_->get_client_no()}
+        {JSON_DEST_PLAYER, player1_->get_client_no()},
+        {JSON_TURN, JSON_GAME_TRUE}
     };
 
     player1_->write(j.dump() + "\r\n");
     j[JSON_PAYLOAD] = json{
         {JSON_SOURCE_PLAYER, JSON_SERVER_NO},
-        {JSON_DEST_PLAYER, player2_->get_client_no()}
+        {JSON_DEST_PLAYER, player2_->get_client_no()},
+        {JSON_TURN, JSON_GAME_FALSE}
     };
     player2_->write(j.dump() + "\r\n");
 
