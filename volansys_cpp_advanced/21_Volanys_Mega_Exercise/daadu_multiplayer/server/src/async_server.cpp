@@ -204,14 +204,38 @@ void Session::read() {
                         session->write(m_response);
                         std::cout << "Sent Match up response from Player " << source_player << "to Player " <<  dest_player << std::endl;
                     }
-                    if (requested_response == JSON_POSITIVE)
+                }
+                if (requested_response == JSON_POSITIVE)
+                {
+                    // Start the game for 2 players
+                    int game_id = 1 + (rand() % 100);
+
+                    // Use a map for efficient session lookups
+                    std::unordered_map<int, std::shared_ptr<Session>> session_map;
+                    for (const auto &session : active_sessions)
                     {
-                        // Start the game for 2 players
-                        int game_id = 1 + (rand() % 100);
-                        //auto game = std::make_shared<Game>(session, player2_session);
+                        session_map[session->get_client_no()] = session;
+                    }
+
+                    // Find Player 1
+                    auto player1_it = session_map.find(source_player);
+                    if (player1_it != session_map.end())
+                    {
+                        auto player1_session = player1_it->second;
+
+                        // Find Player 2
+                        auto player2_it = session_map.find(dest_player); // Assuming `dest_player` refers to Player 2 here.
+                        if (player2_it != session_map.end())
+                        {
+                            auto player2_session = player2_it->second;
+
+                            // Players 1 and 2 are found; start the game
+                            std::cout << "Game started with ID: " << game_id << std::endl;
+                            // Start game logic here
+                            auto game = std::make_shared<Game>(player1_session, player2_session);
+                        }
                     }
                 }
-               
             }
             break;
         case JSON_GAME_MESSAGE:

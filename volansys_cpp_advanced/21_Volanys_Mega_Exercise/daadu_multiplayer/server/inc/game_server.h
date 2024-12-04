@@ -17,11 +17,19 @@ class Game
 {
     public:
     Game(std::shared_ptr<class Session> player1, std::shared_ptr<class Session> player2)
-        : player1_(player1), player2_(player2), turn_(1) {}
+        : player1_(player1), player2_(player2), turn_(1) {
+            game_state_ = GameState::GAME_START;
+            notify_game_start();
+            
+        }
     private:
+    void notify_game_start();
 
     enum class GameState
     {
+        GAME_START,
+        GAME_NOTIFIED,
+
 
     };
 
