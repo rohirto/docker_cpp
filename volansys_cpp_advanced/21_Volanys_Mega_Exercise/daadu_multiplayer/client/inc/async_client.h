@@ -63,10 +63,12 @@ class TCPClient: public menu{
     void write(std::string const& message);
     void close();
     void process_response(std::string& response);
-    std::string display_players(nlohmann::json& player_list);
+    void display_players(nlohmann::json& player_list);
     void server_matchup_request(std::string& player_no);
     void set_player_name(std::string& n){player_name = n;}
     std::string get_player_name(){return player_name;}
+    void set_self_player_no(int n);
+    int get_self_player_no();
     void run();
 
     private:
@@ -96,6 +98,14 @@ class TCPClient: public menu{
         ENTER_PLAYER_NAME_SCREEN,
         RULES_DISPLAY_SCREEN,
         DISPLAY_PLAYERS,
+        REFRESH_DISPLAY_PLAYERS,
+        PLAYER_MATCHUP_REQUEST,
+        MATCHUP_RESPONSE,
+        RECEIVED_MATCHUP_REQUEST,
+        PROCESS_MATCH_REQUEST,
+        RECEIVED_MATCHUP_RESPONSE,
+        ACCEPTED_GAME_REQUEST,
+        WAIT_TO_START,
         Idle,
         WaitingForOpponent,
         Playing,
@@ -110,6 +120,9 @@ class TCPClient: public menu{
     std::queue<std::string> user_inputs_;
     std::mutex queue_mutex_;
     std::condition_variable cv_;
+
+    int self_player_no;
+    int opposite_player_no;
 
 
 

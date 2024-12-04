@@ -16,6 +16,13 @@
 #define JSON_CONFIG_MESSAGE   0
 #define JSON_GAME_MESSAGE     1
 #define JSON_MATCHUP_PACKET   2
+#define JSON_MATCHUP_RESP     3
 #define JSON_PAYLOAD          "payload"
+#define JSON_PLAYER_LIST      "player_list"
 #define JSON_NAME             "name"
 #define JSON_PLAYER_NO        "player_no"
+#define JSON_RESPONSE         "response"
+#define JSON_NEGATIVE         "no"
+#define JSON_POSITIVE         "yes"
+#define JSON_SOURCE_PLAYER    "source_player"
+#define JSON_DEST_PLAYER      "dest_player"

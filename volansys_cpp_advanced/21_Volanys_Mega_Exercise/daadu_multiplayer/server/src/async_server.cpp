@@ -131,11 +131,21 @@ private:
                     std::lock_guard<std::mutex> lock(client_map_mutex);
                     for (const auto &[no, name] : client_map)
                     {
-                        client_list[std::to_string(no)] = name;
+                        if(no == self->client_no)
+                        {
+                            continue;   //Dont include the name of the client in the list to send
+                        }
+                        else
+                        {
+                            client_list[std::to_string(no)] = name;
+                        }
+                        
                     }
                 }
-                response[JSON_PAYLOAD] = client_list;
+                response[JSON_PAYLOAD][JSON_PLAYER_LIST] = client_list;
+                response[JSON_PAYLOAD][JSON_PLAYER_NO] = self->client_no;
                 std::string list_message = response.dump() + "\r\n";
+                std::cout << list_message <<std::endl;
                 self->write(list_message);
             }
             else
@@ -144,19 +154,21 @@ private:
             }
             break;
         case JSON_MATCHUP_PACKET:
-            if (m.payload.contains(JSON_PLAYER_NO))
+            if (m.payload.contains(JSON_SOURCE_PLAYER))
             {
-                int request_no = m.payload.at(JSON_PLAYER_NO).get<int>();
+                int source_player_no = m.payload.at(JSON_SOURCE_PLAYER).get<int>();
+                int dest_player_no = m.payload.at(JSON_DEST_PLAYER).get<int>();
                 for (const auto &session : active_sessions)
                 {
-                    if (request_no == session->get_client_no())
+                    if (dest_player_no == session->get_client_no())
                     {
-                        std::cout << "Player no " << request_no << "found" << std::endl;
+                        std::cout << "Player no " << dest_player_no << "found" << std::endl;
                         //Send the Matchup request to that Player
                         json response = json::object();
                         response[JSON_MESSAGE_TYPE] = JSON_MATCHUP_PACKET;
                         json player_request = json::object();
-                        player_request[JSON_PLAYER_NO] = self->get_client_no();
+                        player_request[JSON_SOURCE_PLAYER] = source_player_no;
+                        player_request[JSON_DEST_PLAYER] = dest_player_no;
                         response[JSON_PAYLOAD] = player_request;
                         std::string m_request = response.dump() + "\r\n";
                         session->write(m_request);
@@ -171,6 +183,32 @@ private:
                 // No field Player no
             }
 
+            break;
+        case JSON_MATCHUP_RESP:
+            //Send the packet as it is to the requester
+            if (m.payload.contains(JSON_DEST_PLAYER) && m.payload.contains(JSON_SOURCE_PLAYER))
+            {
+                int source_player = m.payload.at(JSON_SOURCE_PLAYER).get<int>();
+                int dest_player = m.payload.at(JSON_DEST_PLAYER).get<int>();
+                std::string requested_response = m.payload.at(JSON_RESPONSE).get<std::string>();
+
+                for (const auto &session : active_sessions)
+                {
+                    if (dest_player == session->get_client_no())
+                    {
+                        json response = json::object();
+                        response = {
+                            {JSON_MESSAGE_TYPE, JSON_MATCHUP_RESP},
+                            {JSON_PAYLOAD, {
+                                    {JSON_DEST_PLAYER, dest_player}, 
+                                    {JSON_SOURCE_PLAYER, source_player},
+                                    {JSON_RESPONSE, requested_response}}}};
+                        std::string m_response = response.dump() + "\r\n";
+                        session->write(m_response);
+                        std::cout << "Sent Match up response from Player " << source_player << "to Player " <<  dest_player << std::endl;
+                    }
+                }
+            }
             break;
         case JSON_GAME_MESSAGE:
             break;

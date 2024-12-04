@@ -139,7 +139,7 @@ void TCPClient::process_response(std::string &response)
             // Extract the payload
             nlohmann::json client_list = resp_json["payload"];
             // Display Players
-            std::string player_no = display_players(client_list);
+            std::string player_no = "1";//display_players(client_list);
             server_matchup_request(player_no);
             break;
         }
@@ -158,7 +158,7 @@ void TCPClient::process_response(std::string &response)
     }
 }
 
-std::string TCPClient::display_players(nlohmann::json &player_list)
+void TCPClient::display_players(nlohmann::json &player_list)
 {
     clear();
     display_blue("Availabe Players on Server, Enter no to match up with: \r\n");
@@ -171,33 +171,6 @@ std::string TCPClient::display_players(nlohmann::json &player_list)
     for (auto &[key, value] : player_list.items())
     {
         std::cout << std::setw(5) << key << std::setw(15) << value << std::endl;
-    }
-    while (true)
-    {
-        std::string selection = get_string();
-        // Check if input is 'R' or 'r'
-        if (selection.size() == 1 && (tolower(selection[0]) == 'r'))
-        {
-            return "R"; // Normalize to uppercase 'R'
-        }
-
-        // Check if input is numeric
-        bool is_numeric = true;
-        for (char c : selection)
-        {
-            if (!isdigit(c))
-            {
-                is_numeric = false;
-                break;
-            }
-        }
-
-        if (is_numeric)
-        {
-            return selection; // Valid numeric input
-        }
-
-        display_red("Invalid Input please try again\r\n");
     }
 }
 
@@ -380,10 +353,111 @@ void TCPClient::process_user_input()
             j =json{
                 {JSON_MESSAGE_TYPE, JSON_CONFIG_MESSAGE},          // Config Message
                 {JSON_PAYLOAD, {{JSON_NAME, get_player_name()}}}}; // Serialize to json
-            std::cout << j.dump(4) << std::endl;
+            //std::cout << j.dump(4) << std::endl;
             boost::asio::write(socket_, boost::asio::buffer(j.dump() + "\r\n"));
             //write(j.dump(4) + "\r\n");
             client_state_ = ClientState::DISPLAY_PLAYERS;
+            break;
+        case ClientState::PLAYER_MATCHUP_REQUEST:
+            if (input.size() == 1 && (tolower(input[0]) == 'r'))
+            {
+                // Refresh the player list
+                j = json{
+                    {JSON_MESSAGE_TYPE, JSON_CONFIG_MESSAGE},          // Config Message
+                    {JSON_PAYLOAD, {{JSON_NAME, get_player_name()}}}}; // Serialize to json
+                // std::cout << j.dump(4) << std::endl;
+                boost::asio::write(socket_, boost::asio::buffer(j.dump() + "\r\n"));
+                // write(j.dump(4) + "\r\n");
+                client_state_ = ClientState::DISPLAY_PLAYERS;
+            }
+            else if(input.size() == 1)
+            {
+                // Check if input is numeric
+                bool is_numeric = true;
+                for (char c : input)
+                {
+                    if (!isdigit(c))
+                    {
+                        is_numeric = false;
+                        display_red("Invalid Input please try again\r\n");
+                        client_state_ = ClientState::PLAYER_MATCHUP_REQUEST;
+                        break;
+                    }
+                }
+
+                if (is_numeric)
+                {
+                    // return selection; // Valid numeric input
+                    // Valid Input
+                    int dest_p = std::stoi(input);
+                    j = nlohmann::json{
+                        {JSON_MESSAGE_TYPE, JSON_MATCHUP_PACKET},
+                        {JSON_PAYLOAD, {
+                                    {JSON_DEST_PLAYER, dest_p},
+                                    {JSON_SOURCE_PLAYER, self_player_no}
+                                }
+                            }
+                        };
+                    display_blue("Requesting Matchup... with player:");
+                    display_blue(dest_p);
+                    display_blue("\r\n");
+                    boost::asio::write(socket_, boost::asio::buffer(j.dump() + "\r\n"));
+                    //server_matchup_request(input);
+                    //Need some timeout mechanism also, if the requested player does not input in given time
+                    client_state_ = ClientState::RECEIVED_MATCHUP_RESPONSE;
+                }
+
+            }
+            else
+            {
+                display_red("Invalid Input please try again\r\n");
+                client_state_ = ClientState::PLAYER_MATCHUP_REQUEST;
+            }
+            break;
+        case ClientState::PROCESS_MATCH_REQUEST:
+            //Based on user input process matchup response
+            if (input.size() == 1 && (tolower(input[0]) == 'y'))
+            {
+                //Accept the request and proceed to game
+                display_blue("Accepting Matchup request...\r\n");
+                //Deny request
+                j = nlohmann::json{
+                        {JSON_MESSAGE_TYPE, JSON_MATCHUP_RESP},
+                        {JSON_PAYLOAD, {{JSON_SOURCE_PLAYER, self_player_no},
+                                        {JSON_DEST_PLAYER, opposite_player_no},
+                                        {JSON_RESPONSE, JSON_POSITIVE}}}};
+                
+                boost::asio::write(socket_, boost::asio::buffer(j.dump() + "\r\n"));
+                client_state_ = ClientState::ACCEPTED_GAME_REQUEST;
+
+
+            }
+            else if(input.size() == 1 && (tolower(input[0]) == 'n'))
+            {
+                display_blue("Rejecting Matchup request...\r\n");
+                //Deny request
+                j = nlohmann::json{
+                        {JSON_MESSAGE_TYPE, JSON_MATCHUP_RESP},
+                        {JSON_PAYLOAD, {{JSON_SOURCE_PLAYER, self_player_no},
+                                        {JSON_DEST_PLAYER, opposite_player_no},
+                                        {JSON_RESPONSE, JSON_NEGATIVE}}}};
+                
+                boost::asio::write(socket_, boost::asio::buffer(j.dump() + "\r\n"));
+                client_state_ = ClientState::PLAYER_MATCHUP_REQUEST;
+                
+            }
+            else
+            {
+                //Invalid Input
+            }
+            break;
+        case ClientState::WAIT_TO_START:
+            if(input.empty())
+            {
+                //User pressed enter
+                clear();
+                display_green("Starting Game\r\n");
+            }
             break;
         case ClientState::Idle:
             if (input == "connect")
@@ -426,7 +500,7 @@ void TCPClient::handle_server_response()
     while (true)
     {
         boost::system::error_code ec;
-        boost::asio::read_until(socket_, buffer, '\n', ec);
+        boost::asio::read_until(socket_, buffer, "\r\n", ec);
 
         if (ec)
         {
@@ -443,38 +517,105 @@ void TCPClient::handle_server_response()
         {
             std::cout << "Server: " << response << std::endl;
 
+
             try
             {
                 json response_json = json::parse(response);
-
-                switch (client_state_.load())
+                if (response_json.contains(JSON_MESSAGE_TYPE))
                 {
-                case ClientState::DISPLAY_PLAYERS:
+                    int m_type = response_json.at(JSON_MESSAGE_TYPE).get<int>();
 
-                    break;
-                case ClientState::Idle:
-                    std::cout << "Received unexpected data while idle." << std::endl;
-                    break;
-
-                case ClientState::WaitingForOpponent:
-                    if (response_json["message_type"] == 2)
-                    { // Example: Match found
-                        std::cout << "Match found! Starting game..." << std::endl;
-                        client_state_ = ClientState::Playing;
-                    }
-                    else
+                    switch (client_state_.load())
                     {
-                        std::cout << "Received unexpected response while waiting for an opponent." << std::endl;
+                    case ClientState::DISPLAY_PLAYERS:
+                    {
+                        json client_list = response_json[JSON_PAYLOAD][JSON_PLAYER_LIST];
+                        // Display Players
+                        display_players(client_list);
+                        //server_matchup_request(player_no);
+                        int s_player_no = response_json.at(JSON_PAYLOAD).at(JSON_PLAYER_NO).get<int>();
+                        self_player_no = s_player_no;
+                        
                     }
-                    break;
+                        client_state_ = ClientState::PLAYER_MATCHUP_REQUEST;
+                        break;
+                    case ClientState::RECEIVED_MATCHUP_REQUEST:
 
-                case ClientState::Playing:
-                    std::cout << "Gameplay response: " << response_json.dump(4) << std::endl;
-                    break;
+                        break;
+                    case ClientState::RECEIVED_MATCHUP_RESPONSE:
+                        {
+                            int source_player = response_json.at(JSON_PAYLOAD).at(JSON_SOURCE_PLAYER).get<int>();
+                            int dest_player = response_json.at(JSON_PAYLOAD).at(JSON_DEST_PLAYER).get<int>();
+                            std::string r_player_resp = response_json.at(JSON_PAYLOAD).at(JSON_RESPONSE).get<std::string>();
 
-                case ClientState::Disconnected:
-                    return;
+                            display_green("Player no ");
+                            display_blue(source_player);
+                            display_green(" responded match request with: ");
+                            display_blue(r_player_resp);
+                            display_blue("\r\n");
+                            
+                            if(r_player_resp == JSON_POSITIVE)
+                            {
+                                //Accepted the Game request
+                                display_green("Player ");
+                                display_blue(source_player);
+                                display_green(" has accepted the request.\r\n Press ");
+                                display_blue("Enter ");
+                                display_green("to start the game\r\n");
+                                client_state_ = ClientState::WAIT_TO_START;
+                            }
+
+                        }
+                        break;
+                    case ClientState::ACCEPTED_GAME_REQUEST:
+                        break;
+                    case ClientState::Idle:
+                        std::cout << "Received unexpected data while idle." << std::endl;
+                        break;
+
+                    case ClientState::WaitingForOpponent:
+                        if (response_json["message_type"] == 2)
+                        { // Example: Match found
+                            std::cout << "Match found! Starting game..." << std::endl;
+                            client_state_ = ClientState::Playing;
+                        }
+                        else
+                        {
+                            std::cout << "Received unexpected response while waiting for an opponent." << std::endl;
+                        }
+                        break;
+
+                    case ClientState::Playing:
+                        std::cout << "Gameplay response: " << response_json.dump(4) << std::endl;
+                        break;
+
+                    case ClientState::Disconnected:
+                        return;
+                    default:
+                        //Any Async events can come over here like Matchup request
+                        if(m_type = JSON_MATCHUP_PACKET)
+                        {
+                            int dest_player = response_json.at(JSON_PAYLOAD).at(JSON_DEST_PLAYER).get<int>();
+                            if(dest_player == self_player_no)
+                            {
+                                display_green("Recieved Matchup Request from Player no: ");
+                                int player_req = response_json.at(JSON_PAYLOAD).at(JSON_SOURCE_PLAYER).get<int>();
+                                display_green(player_req);
+                                display_green("\r\n");
+                                display_blue("Press Y to Accept, N to Reject\r\n");
+                                opposite_player_no = player_req;
+                                client_state_ = ClientState::PROCESS_MATCH_REQUEST;
+                            }
+                        }
+
+                        break;
+                    }
                 }
+                else
+                {
+                    //Invalid Json
+                }
+                
             }
             catch (const json::parse_error &e)
             {
@@ -482,4 +623,14 @@ void TCPClient::handle_server_response()
             }
         }
     }
+}
+
+void TCPClient::set_self_player_no(int n)
+{
+    n = self_player_no;
+}
+
+int TCPClient::get_self_player_no()
+{
+    return self_player_no;
 }
