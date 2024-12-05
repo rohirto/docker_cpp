@@ -14,6 +14,9 @@
 #include <limits>
 #include <sstream>
 #include <set>
+#include <utility>
+
+
 
 /**
  * @brief Method to set name of player
@@ -233,6 +236,104 @@ bool player::if_check_pt_reached(std::pair<int, int> new_pos)
 }
 
 /**
+ * @brief Construct a new player::player object
+ *
+ * @param no the player number(Either can be 1 or 2)
+ */
+player::player(int no, const std::string& n)
+{
+    name = n;
+    // display_yellow("Set player number (1 or 2): ");
+    player_no = no;
+
+    turn = false;
+    daa_initiated = false;
+    has_killed = false;
+
+    if (player_no == 1)
+    {
+
+        pawn_pos[1] = piece(false, false, player_1_house_p1); // Pawn 1
+        pawn_pos[2] = piece(false, false, player_1_house_p2); // Pawn 2
+        pawn_pos[3] = piece(false, false, player_1_house_p3); // Pawn 3
+        pawn_pos[4] = piece(false, false, player_1_house_p4); // Pawn 4
+        pawn_pos[5] = piece(false, false, player_1_house_p5); // Pawn 5
+        pawn_pos[6] = piece(false, false, player_1_house_p6); // Pawn 6
+        pawn_pos[7] = piece(false, false, player_1_house_p7); // Pawn 7
+        pawn_pos[8] = piece(false, false, player_1_house_p8); // Pawn 8
+        king_pos = piece(false, true, player_1_house_k);      // King
+
+        player_map[1] = player1_map_1; // i,j value on thegame board
+        player_map[2] = player1_map_2;
+        player_map[3] = player1_map_3;
+        player_map[4] = player1_map_4;
+        player_map[5] = player1_map_5;
+        player_map[6] = player1_map_6;
+        player_map[7] = player1_map_7;
+        player_map[8] = player1_map_8;
+        player_map[9] = player1_map_9;
+        player_map[10] = player1_map_10;
+        player_map[11] = player1_map_11;
+        player_map[12] = player1_map_12;
+        player_map[13] = player1_map_13;
+        player_map[14] = player1_map_14;
+        player_map[15] = player1_map_15;
+        player_map[16] = player1_map_16;
+        player_map[17] = player1_map_17;
+        player_map[18] = player1_map_18;
+        player_map[19] = player1_map_19;
+        player_map[20] = player1_map_20;
+        player_map[21] = player1_map_21;
+        player_map[22] = player1_map_22;
+        player_map[23] = player1_map_23;
+        player_map[24] = player1_map_24;
+        player_map[25] = player1_map_25;
+        player_map[26] = player1_map_26;
+
+        turn = true;
+    }
+    else if (player_no == 2)
+    {
+        pawn_pos[1] = piece(false, false, player_2_house_p1); // Pawn 1
+        pawn_pos[2] = piece(false, false, player_2_house_p2); // Pawn 2
+        pawn_pos[3] = piece(false, false, player_2_house_p3); // Pawn 3
+        pawn_pos[4] = piece(false, false, player_2_house_p4); // Pawn 4
+        pawn_pos[5] = piece(false, false, player_2_house_p5); // Pawn 5
+        pawn_pos[6] = piece(false, false, player_2_house_p6); // Pawn 6
+        pawn_pos[7] = piece(false, false, player_2_house_p7); // Pawn 7
+        pawn_pos[8] = piece(false, false, player_2_house_p8); // Pawn 8
+        king_pos = piece(false, true, player_2_house_k);      // King
+
+        player_map[1] = player2_map_1; // i,j value on thegame board
+        player_map[2] = player2_map_2;
+        player_map[3] = player2_map_3;
+        player_map[4] = player2_map_4;
+        player_map[5] = player2_map_5;
+        player_map[6] = player2_map_6;
+        player_map[7] = player2_map_7;
+        player_map[8] = player2_map_8;
+        player_map[9] = player2_map_9;
+        player_map[10] = player2_map_10;
+        player_map[11] = player2_map_11;
+        player_map[12] = player2_map_12;
+        player_map[13] = player2_map_13;
+        player_map[14] = player2_map_14;
+        player_map[15] = player2_map_15;
+        player_map[16] = player2_map_16;
+        player_map[17] = player2_map_17;
+        player_map[18] = player2_map_18;
+        player_map[19] = player2_map_19;
+        player_map[20] = player2_map_20;
+        player_map[21] = player2_map_21;
+        player_map[22] = player2_map_22;
+        player_map[23] = player2_map_23;
+        player_map[24] = player2_map_24;
+        player_map[25] = player2_map_25;
+        player_map[26] = player2_map_26;
+    }
+}
+
+/**
  * @brief set the turn of the player
  *
  * @param val if true, the set the turn of player, else give turn to other
@@ -242,52 +343,52 @@ void player::set_turn(bool val)
     turn = val;
 }
 
-// /**
-//  * @brief check the daa for pawns and king, if daa is remaining, then take a piece out and update daa
-//  *
-//  * @param c character which determiines if pawn or king
-//  * @return true if a piece is taken out
-//  * @return false if all peices are already out
-//  */
-// bool player::daa_check(char c) // if c == p -> pawn, if c== k -> king
-// {
-//     // Check the bool daa value, if any goti pawn is false, set it to true, return true, else return false
-//     if (c == 'k')
-//     {
-//         if (!king_pos.daa_check() && !king_pos.checkpt_check())
-//         {
-//             king_pos.set_daa(true);
-//             king_pos.step_no = 1;
-//             king_pos.setpostion(player_map[king_pos.step_no]);
-//             daa_initiated = true;
-//             return true;
-//         }
-//         else
-//         {
-//             display_red("King already taken out!\n");
-//             c = 'p';
-//         }
-//     }
-//     if (c == 'p')
-//     {
-//         for (auto &p : pawn_pos)
-//         {
-//             if (!p.second.daa_check() && !p.second.checkpt_check())
-//             {
-//                 p.second.set_daa(true);
-//                 p.second.step_no = 1;
-//                 p.second.setpostion(player_map[p.second.step_no]);
-//                 daa_initiated = true;
-//                 return true;
-//             }
-//         }
-//     }
+/**
+ * @brief check the daa for pawns and king, if daa is remaining, then take a piece out and update daa
+ *
+ * @param c character which determiines if pawn or king
+ * @return true if a piece is taken out
+ * @return false if all peices are already out
+ */
+bool player::daa_check(char c) // if c == p -> pawn, if c== k -> king
+{
+    // Check the bool daa value, if any goti pawn is false, set it to true, return true, else return false
+    if (c == 'k')
+    {
+        if (!king_pos.daa_check() && !king_pos.checkpt_check())
+        {
+            king_pos.set_daa(true);
+            king_pos.step_no = 1;
+            king_pos.setpostion(player_map[king_pos.step_no]);
+            daa_initiated = true;
+            return true;
+        }
+        else
+        {
+            //TODO: display_red("King already taken out!\n");
+            c = 'p';
+        }
+    }
+    if (c == 'p')
+    {
+        for (auto &p : pawn_pos)
+        {
+            if (!p.second.daa_check() && !p.second.checkpt_check())
+            {
+                p.second.set_daa(true);
+                p.second.step_no = 1;
+                p.second.setpostion(player_map[p.second.step_no]);
+                daa_initiated = true;
+                return true;
+            }
+        }
+    }
 
-//     display_red("All pawns already out!\n");
+    //TODO: display_red("All pawns already out!\n");
 
-//     return false;
-// }
-#if 0
+    return false;
+}
+
 /**
  * @brief Helper method to move a piece on the board, according to the rules of the game
  *
@@ -463,9 +564,10 @@ bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
                 }
                 else // Not killed any of the other player's pieces
                 {
-                    display_yellow("Need to take out atleast one piece of other player to reach checkpoint\n");
-                    display_yellow("Move any other piece? (y or n)");
-                    char chh = get_char();
+                    //TODO: display_yellow("Need to take out atleast one piece of other player to reach checkpoint\n");
+                    //TODO: display_yellow("Move any other piece? (y or n)");
+                    //TODO: char chh = get_char();
+                    char chh = 'y';
                     if (chh == 'y')
                     {
                         return false;
@@ -480,9 +582,10 @@ bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
         else
         {
             // Illegal and void move
-            display_red("Not permitted!,press 'q' to give up turn, or any 'r' to move nay other piece\n");
+            //TODO: display_red("Not permitted!,press 'q' to give up turn, or any 'r' to move nay other piece\n");
 
-            char ch = get_char();
+            //TODO: char ch = get_char();
+            char ch = 'q';
             if (ch == 'q')
             {
                 return true;
@@ -495,14 +598,15 @@ bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
     }
     else
     {
-        display_red("Cannot move Piece no ");
-        display_blue(piece_no);
-        display_red(",still in house!\n");
+        //TODO: display_red("Cannot move Piece no ");
+        //TODO: display_blue(piece_no);
+        //TODO: display_red(",still in house!\n");
 
         if (steps == 1)
         {
-            display_yellow("Do you want to take this piece out (y)?");
-            char ch = get_char();
+            //TODO: display_yellow("Do you want to take this piece out (y)?");
+            //TODO: char ch = get_char();
+            char ch = 'y';
 
             if (ch == 'y')
             {
@@ -516,7 +620,6 @@ bool player::helper_move_piece(piece &p, int steps, int piece_no, player &other)
         return false;
     }
 }
-#endif
 bool isNumberInSet(int number, const std::set<int>& cp) {
     // Use std::find to check if the number is present in the vector
     auto it = std::find(cp.begin(), cp.end(), number);
@@ -525,7 +628,7 @@ bool isNumberInSet(int number, const std::set<int>& cp) {
     // indicating that the number was not found
     return it != cp.end();
 }
-#if 0
+
 /**
  * @brief Method to check all possible moves for piece p object
  *
@@ -552,9 +655,9 @@ void player::check_possible_moves(std::vector<int> &moves_lst,std::set<int>& cp,
 
    
 }
-#endif
 
-#if 0
+
+
 void player::check_overlapping_pieces(std::vector<std::string>& s,std::set<int>& cp,std::pair<const int, piece> &p)
 {
     std::set<int> pp;
@@ -588,7 +691,7 @@ void player::check_overlapping_pieces(std::vector<std::string>& s,std::set<int>&
     }
 
     //Display overlaps
-    display_overlaps_set(pp, player_no);
+    //TODO: display_overlaps_set(pp, player_no);
 }
 
 
@@ -607,7 +710,7 @@ void player::check_overlapping_enemy_pieces(player& other, std::set<int>& cp,std
         }
 
         //Display overlaps
-        display_overlaps_set(pp, other.player_no);
+        //TODO: display_overlaps_set(pp, other.player_no);
     }
 
     
@@ -641,7 +744,8 @@ void player::move_piece(int steps, player &other)
         }
         checked_pieces.clear(); //Clear the set of checked pieces after the process is complete
         checked_pieces_enemy.clear();
-        int piece_no = display_possible_moves(possible_moves);
+        //TODO: int piece_no = display_possible_moves(possible_moves);
+        int piece_no = 1;
 
         
 
@@ -666,7 +770,8 @@ void player::move_piece(int steps, player &other)
         }
     }
 }
-#endif
+
+
 // JSON Serialization for piece
 void to_json(json& j, const piece& p) 
 {
@@ -719,18 +824,17 @@ void to_json(json& j, const player& pl) {
 
 //JSON Deserialzation for player
 void from_json(const json& j, player& pl) {
-    pl.set_daa_initiated(j.at("daa_initiated").get<bool>());
-    pl.has_killed = j.at("has_killed").get<bool>();
-    // Deserialize king position
-    piece king_piece;
-    from_json(j.at("king_position"), king_piece);
-    pl.king_pos = king_piece;
+    // Deserialize base class (piece)
+    from_json(j.at("piece"), static_cast<piece&>(pl));
 
     // Deserialize player-specific fields
     pl.setname(j.at("name").get<std::string>());
+    pl.set_turn(j.at("turn").get<bool>());
+    pl.set_daa_initiated(j.at("daa_initiated").get<bool>());
+    pl.has_killed = j.at("has_killed").get<bool>();
 
     // Deserialize pawn positions (map<int, piece>)
-    const auto& pawns_json = j.at("pawn_positions");
+    const auto& pawns_json = j.at("pawn_pos");
     for (const auto& [key, value] : pawns_json.items()) {
         int key_int = std::stoi(key); // Convert JSON key to int
         piece pawn_piece;
@@ -738,11 +842,16 @@ void from_json(const json& j, player& pl) {
         pl.pawn_pos[key_int] = pawn_piece;
     }
 
-    pl.player_no = j.at("player_no").get<int>();
+    // Deserialize king position
+    piece king_piece;
+    from_json(j.at("king_pos"), king_piece);
+    pl.king_pos = king_piece;
 
-    pl.set_turn(j.at("turn").get<bool>());
-    
-    // Deserialize base class (piece)
-    //from_json(j.at("piece"), static_cast<piece&>(pl));
-
+    // Deserialize player map (map<int, pair<int, int>>)
+    const auto& map_json = j.at("player_map");
+    for (const auto& [key, value] : map_json.items()) {
+        int key_int = std::stoi(key);
+        std::pair<int, int> pos = {value[0].get<int>(), value[1].get<int>()};
+        pl.player_map[key_int] = pos;
+    }
 }

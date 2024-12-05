@@ -152,14 +152,11 @@ display_red("Press q to to go back");
  * @param name name of the player
  * @return char this shoulf be 'f'
  */
-char menu::display_cowry_menu(std::string_view name)
+void menu::display_cowry_menu(std::string_view name)
 {
-    std::cout << "\n";
     display_blue(name);
-    display_yellow("'s turn:\n1. press 'f' to throw cowries: ");
-    char c = get_char();
-
-    return c;
+    display_yellow("'s turn:\r\n");
+    display_yellow("1. press 'f' to throw cowries: ");
 
 }
 
@@ -168,13 +165,9 @@ char menu::display_cowry_menu(std::string_view name)
  * 
  * @return char selected option by the user
  */
-char menu::display_daa_menu()
+void menu::display_daa_menu()
 {
     display_yellow("\n1. Press 'k' to take out king\n2. Press 'p' to take out pawn\n3. Press 'c' to skip daa: ");
-
-    char c = get_char();
-
-    return c;
 }
 
 /**

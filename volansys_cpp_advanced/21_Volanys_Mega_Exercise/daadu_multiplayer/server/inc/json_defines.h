@@ -30,3 +30,5 @@
 #define JSON_TURN             "turn"
 #define JSON_GAME_TRUE        1
 #define JSON_GAME_FALSE       0
+#define JSON_PLAYER_1         "player_1"
+#define JSON_PLAYER_2         "player_2"

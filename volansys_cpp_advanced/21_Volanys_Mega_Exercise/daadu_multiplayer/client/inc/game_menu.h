@@ -26,8 +26,8 @@ class menu: virtual public client_screen{
 
 public:
     void display_menu() override;
-    char display_cowry_menu(std::string_view name)override;
-    char display_daa_menu()override;
+    void display_cowry_menu(std::string_view name)override;
+    void display_daa_menu()override;
     int display_possible_moves(std::vector<int>& moves);
     void display_rules()override;
     void display_overlaps(std::vector<std::string>& s);

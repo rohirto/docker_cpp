@@ -118,6 +118,7 @@ void Session::read() {
                     { // Assign client number if not already done
                         self->client_no = ++client_counter;
                         client_map[self->client_no] = m.payload[JSON_NAME];
+                        self->client_name = m.payload[JSON_NAME];
                     }
                 }
                 //Send Response

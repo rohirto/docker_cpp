@@ -26,3 +26,5 @@
 #define JSON_POSITIVE         "yes"
 #define JSON_SOURCE_PLAYER    "source_player"
 #define JSON_DEST_PLAYER      "dest_player"
+#define JSON_PLAYER_1         "player_1"
+#define JSON_PLAYER_2         "player_2"

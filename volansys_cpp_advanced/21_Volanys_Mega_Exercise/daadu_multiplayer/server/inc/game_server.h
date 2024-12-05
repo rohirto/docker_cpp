@@ -12,12 +12,13 @@
 #pragma once
 
 #include "async_server.h"
+#include "player.h"
 
 class Game
 {
     public:
     Game(std::shared_ptr<class Session> player1, std::shared_ptr<class Session> player2)
-        : player1_(player1), player2_(player2), turn_(1) {
+        : player1_(player1), player2_(player2), p1(1, player1->get_client_name()), p2(2, player2->get_client_name()) {
             game_state_ = GameState::GAME_START;
             notify_game_start();
             
@@ -35,6 +36,6 @@ class Game
 
 
     std::shared_ptr<class Session> player1_, player2_;
+    player p1, p2;
     GameState game_state_; // Encapsulation of the game rules and state
-    int turn_;
 };

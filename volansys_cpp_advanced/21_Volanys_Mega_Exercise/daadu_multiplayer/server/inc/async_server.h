@@ -71,6 +71,7 @@ class Session : public std::enable_shared_from_this<Session> {
     void start();
     void write(const std::string& message);
     int get_client_no() const { return client_no; }
+    std::string get_client_name() { return client_name; }
     ~Session();
     private:
     void read();
@@ -79,4 +80,5 @@ class Session : public std::enable_shared_from_this<Session> {
     tcp::socket socket_;
     std::string buffer_;
     int client_no;
+    std::string client_name;
 };

@@ -19,12 +19,10 @@
 #include <map>
 #include <set>
 #include <utility>
-#include "game_menu.h"
-#include <fstream>
+#include <vector>
 #include <nlohmann/json.hpp>
-
+//#include "game_menu.h"
 using json = nlohmann::json;
-
 
 //House position pairs
 
@@ -157,17 +155,18 @@ public:
     piece(const bool val, const bool king_val, const std::pair<int, int>& pos)
     : position(pos), is_king(king_val), is_daa_done(val), is_check_point_reached(false),step_no(0) {}
     void setpostion(const std::pair<int,int>& pos){position = pos;};
-    bool daa_check() const {return is_daa_done ;}
+    bool daa_check()const {return is_daa_done ;}
     void set_daa(const bool& val){is_daa_done = val;}
     std::pair<int,int> getposition() const {return position;}
-    bool is_p_king() const { return is_king; }
+    bool is_p_king() const {  return is_king; }
     void set_checkpt(bool val){ is_check_point_reached = val;}
     bool checkpt_check() const {return is_check_point_reached;}
 
     bool operator!=(const piece& other){if(is_king == other.is_king && position == other.position &&  
                                          is_daa_done == other.is_daa_done ){return false;} return true;};
+    
 
-    //Friend functions
+    //Friend Functions
     friend void to_json(json& j, const piece& p);
     friend void from_json(const json& j, piece& p);
 
@@ -178,7 +177,7 @@ public:
  * @brief Player class
  * 
  */
-class player: virtual public piece, public menu{
+class player: virtual public piece{
     std::string name;
     int player_no; //1 or 2
     bool turn;   //true if player's turn 
@@ -195,6 +194,7 @@ class player: virtual public piece, public menu{
 
 public:
     player(){}
+    player(int no, const std::string& n);
     void setname(const std::string& s);
     std::string getname() const;
     int get_player_no() const { return player_no; }
@@ -213,29 +213,18 @@ public:
     bool get_kill() const {return has_killed;}
     bool is_daa_remaining();
 
-    player& operator=(player&& other) noexcept {
-        if (this != &other) {
-            piece::operator=(std::move(other)); // Move-assign virtual base
-            //menu::operator=(std::move(other));  // Move-assign non-virtual base
-            // Handle member variables specific to 'player' if any
-        }
-        return *this;
-    }
-
 private:
     bool helper_move_piece(piece& p,int steps,int piece_no, player& other);
     void check_possible_moves(std::vector<int>& moves_lst, std::set<int>& cp, std::pair<const int, piece>& p,int steps);
     void check_overlapping_pieces(std::vector<std::string>& s, std::set<int>& cp,std::pair<const int, piece> &p);
     void check_overlapping_enemy_pieces(player& other, std::set<int>& cp,std::pair<const int, piece> &p);
 
+
     //Friend functions
     friend void to_json(json& j, const player& pl);
     friend void from_json(const json& j, player& pl);
 
-    
-
 };
-
 
 
 

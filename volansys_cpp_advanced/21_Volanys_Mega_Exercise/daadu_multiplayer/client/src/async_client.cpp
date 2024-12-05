@@ -9,6 +9,11 @@
  *
  */
 #include "async_client.h"
+#include "player.h"
+#include "game_objects.h"
+
+//Static variables
+
 
 /**
  * @brief TCP Client Write Method
@@ -460,6 +465,23 @@ void TCPClient::process_user_input()
                 client_state_ = ClientState::SERVER_GAME_START_NOTIFY_RX;
             }
             break;
+        case ClientState::GAME_BOARD_SET:
+            if(self_player.get_turn())
+            {
+                if(input[0] == 'f')
+                {
+                    //Got the confirmation
+                    c.cowry_throw();
+                    int score = c.getCount();
+                    display_yellow("You got: "); //Display cowries score to player
+                    display_blue(score);
+                    std::cout << std::endl;
+                    // Add delay
+                    usleep(2 * 1000000); // sleeps for 2 second
+                }
+
+            }
+            break;
         case ClientState::Idle:
             if (input == "connect")
             {
@@ -560,16 +582,49 @@ void TCPClient::handle_server_response()
                                 //Accepted the Game request
                                 display_green("Player ");
                                 display_blue(source_player);
-                                display_green(" has accepted the request.\r\n Press ");
-                                display_blue("Enter ");
-                                display_green("to start the game\r\n");
+                                display_green(" has accepted the request.\r\n");
                                 client_state_ = ClientState::ACCEPTED_GAME_REQUEST;
                             }
 
                         }
                         break;
                     case ClientState::ACCEPTED_GAME_REQUEST:
+                        //received the json regarding 2 json,
+                        // Extract players
+                        {
+                            
+                            gb.clear();
+                            //clear();
+                            if(player_name == response_json.at(JSON_PAYLOAD).at(JSON_PLAYER_1).at(JSON_NAME).get<std::string>())
+                            {
+                                from_json(response_json[JSON_PAYLOAD][JSON_PLAYER_1], self_player);
+                                from_json(response_json[JSON_PAYLOAD][JSON_PLAYER_2], opposite_player);
+                                gb.set_board_interactive(self_player, opposite_player);
+                            }
+                            else
+                            {
+                                from_json(response_json[JSON_PAYLOAD][JSON_PLAYER_2], self_player);
+                                from_json(response_json[JSON_PAYLOAD][JSON_PLAYER_1], opposite_player);
+                                gb.set_board_interactive(opposite_player, self_player);
+                            }
 
+                            if(self_player.get_turn())
+                            {
+                                display_cowry_menu(self_player.getname());
+                                client_state_ = ClientState::GAME_BOARD_SET;
+                            }
+                            else
+                            {
+                                display_blue("Waiting for ");
+                                display_green(opposite_player.getname());
+                                display_blue(" to play....\r\n");
+                                client_state_ = ClientState::WAIT_FOR_OPPONENT;
+                            }
+                            
+                        }
+                        break;
+                    case ClientState::WAIT_FOR_OPPONENT:
+                        //Something received from server
                         break;
                     case ClientState::Idle:
                         std::cout << "Received unexpected data while idle." << std::endl;

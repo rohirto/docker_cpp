@@ -96,8 +96,8 @@ class client_screen
 
     //Vitual funcs
     virtual void display_menu()=0;
-    virtual char display_cowry_menu(std::string_view name)=0;
-    virtual char display_daa_menu()=0;
+    virtual void display_cowry_menu(std::string_view name)=0;
+    virtual void display_daa_menu()=0;
     virtual void display_rules()=0;
 
 

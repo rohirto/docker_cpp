@@ -96,7 +96,9 @@
         "spanstream": "cpp",
         "stacktrace": "cpp",
         "stdfloat": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "game_menu.h": "c",
+        "ncurses.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

@@ -22,6 +22,8 @@
 #include <nlohmann/json.hpp>
 #include "json_defines.h"
 #include "game_event.h"
+#include "player.h"
+#include "game_objects.h"
 namespace asio = boost::asio;
 using namespace std::placeholders;
 using asio::ip::tcp;
@@ -70,6 +72,11 @@ class TCPClient: public menu{
     void set_self_player_no(int n);
     int get_self_player_no();
     void run();
+    //Public Variables
+    player self_player;
+    player opposite_player;
+    cowries c;
+    game_board gb;
 
     private:
     //tcp::socket            socket_;
@@ -105,6 +112,8 @@ class TCPClient: public menu{
         PROCESS_MATCH_REQUEST,
         RECEIVED_MATCHUP_RESPONSE,
         ACCEPTED_GAME_REQUEST,
+        GAME_BOARD_SET,
+        WAIT_FOR_OPPONENT,
         WAIT_TO_START,
         SERVER_GAME_START_NOTIFY_RX,
         Idle,
@@ -124,16 +133,13 @@ class TCPClient: public menu{
 
     int self_player_no;
     int opposite_player_no;
+    
 
 
 
 
 };
 
-//Thread Prototypes
-void handle_user_input();
-void process_user_input(boost::asio::ip::tcp::socket& socket);
-void handle_server_response(boost::asio::ip::tcp::socket& socket);
 
 
 
