@@ -28,3 +28,4 @@
 #define JSON_DEST_PLAYER      "dest_player"
 #define JSON_PLAYER_1         "player_1"
 #define JSON_PLAYER_2         "player_2"
+#define JSON_COWRIES_THROW    "cowry_throw"

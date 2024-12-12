@@ -70,6 +70,7 @@ class TCPClient: public menu{
     void set_player_name(std::string& n){player_name = n;}
     std::string get_player_name(){return player_name;}
     void set_self_player_no(int n);
+    void send_game_state();
     int get_self_player_no();
     void run();
     //Public Variables
@@ -113,6 +114,7 @@ class TCPClient: public menu{
         RECEIVED_MATCHUP_RESPONSE,
         ACCEPTED_GAME_REQUEST,
         GAME_BOARD_SET,
+        WAIT_FOR_GAME_SERVER_RESP,
         WAIT_FOR_OPPONENT,
         WAIT_TO_START,
         SERVER_GAME_START_NOTIFY_RX,

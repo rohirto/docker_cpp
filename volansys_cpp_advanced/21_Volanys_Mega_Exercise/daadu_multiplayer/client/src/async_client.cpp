@@ -478,6 +478,9 @@ void TCPClient::process_user_input()
                     std::cout << std::endl;
                     // Add delay
                     usleep(2 * 1000000); // sleeps for 2 second
+                    //Send response to server
+                    send_game_state();
+                    client_state_ = ClientState::WAIT_FOR_GAME_SERVER_RESP;
                 }
 
             }
@@ -623,6 +626,8 @@ void TCPClient::handle_server_response()
                             
                         }
                         break;
+                    case ClientState::WAIT_FOR_GAME_SERVER_RESP:
+                        break;
                     case ClientState::WAIT_FOR_OPPONENT:
                         //Something received from server
                         break;
@@ -690,4 +695,37 @@ void TCPClient::set_self_player_no(int n)
 int TCPClient::get_self_player_no()
 {
     return self_player_no;
+}
+
+void TCPClient::send_game_state()
+{
+    json j = json::object();
+    json j_player1 = json::object();
+    json j_player2 = json::object();
+    json players = json::object();
+    json cowries = json::object();
+
+    if(self_player_no == 1)
+    {
+        to_json(j_player1, self_player);
+        to_json(j_player2, opposite_player);
+        
+    }
+    else
+    {
+        to_json(j_player1, opposite_player);
+        to_json(j_player2, self_player);
+
+    }
+
+    j[JSON_MESSAGE_TYPE] = JSON_GAME_MESSAGE;
+    players[JSON_PLAYER_1] = j_player1;
+    players[JSON_PLAYER_2] = j_player2;
+    players[JSON_COWRIES_THROW] = c.getCount();
+    j[JSON_PAYLOAD] = players;
+
+    boost::asio::write(socket_, boost::asio::buffer(j.dump() + "\r\n"));
+
+
+
 }
