@@ -33,7 +33,7 @@ class client_screen
     template <typename T>
     void display_red(T str)
     {
-        std::cout << "\033[1;31m" << str << "\033[0m";
+        std::cout << "\033[1;31m" << str << "\033[0m" << std::flush;
     }
 
     /**
@@ -45,7 +45,7 @@ class client_screen
     template <typename T>
     void display_green(T str)
     {
-        std::cout << "\033[1;32m" << str << "\033[0m";
+        std::cout << "\033[1;32m" << str << "\033[0m" << std::flush;
     }
 
     /**
@@ -57,7 +57,7 @@ class client_screen
     template <typename T>
     void display_yellow(T str)
     {
-        std::cout << "\033[1;33m" << str << "\033[0m";
+        std::cout << "\033[1;33m" << str << "\033[0m" << std::flush;
     }
 
     /**
@@ -69,7 +69,7 @@ class client_screen
     template <typename T>
     void display_blue(T str)
     {
-        std::cout << "\033[1;34m" << str << "\033[0m";
+        std::cout << "\033[1;34m" << str << "\033[0m" << std::flush;
     }
 
     /**
